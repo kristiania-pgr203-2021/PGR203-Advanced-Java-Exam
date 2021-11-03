@@ -1,6 +1,8 @@
 package no.kristiania.survey;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Files;
@@ -12,10 +14,10 @@ import java.util.Map;
 
 public class HttpServer {
     private final ServerSocket serverSocket;
-    private Path rootDirectory;
 
-    public HttpServer(int port) throws IOException {
-        serverSocket = new ServerSocket(port);
+    public HttpServer(int serverPort) throws IOException {
+        serverSocket = new ServerSocket(serverPort);
+
         new Thread(this::handleClients).start();
     }
 
@@ -24,12 +26,13 @@ public class HttpServer {
             while (true) {
                 handleClient();
             }
-        } catch (IOException | SQLException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void handleClient() throws IOException, SQLException {
+    private void handleClient() throws IOException {
+
         Socket clientSocket = serverSocket.accept();
 
         HttpMessage httpMessage = new HttpMessage(clientSocket);
@@ -38,15 +41,19 @@ public class HttpServer {
 
         int questionPos = requestTarget.indexOf('?');
         String fileTarget;
+        String query = null;
         if (questionPos != -1) {
             fileTarget = requestTarget.substring(0, questionPos);
+            query = requestTarget.substring(questionPos+1);
         } else {
             fileTarget = requestTarget;
         }
 
-        if (fileTarget.equals("/api/tasks")) {
+        if (fileTarget.equals("/api/questions")) {
 
-            //Ikke i bruk
+            String responseTxt = "<h3>Her kommer det spørsmål!</h3>";
+
+            writeOkResponse(clientSocket, responseTxt, "txt/html");
 
         } else if (fileTarget.equals("/api/newProduct")) {
 
@@ -56,9 +63,14 @@ public class HttpServer {
 
             //Ikke i bruk
 
+
+
         } else {
-            if (rootDirectory != null && Files.exists(rootDirectory.resolve(fileTarget.substring(1)))) {
-                String responseText = Files.readString(rootDirectory.resolve(fileTarget.substring(1)));
+            InputStream fileResource = getClass().getResourceAsStream(fileTarget);
+            if (fileResource != null) {
+                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                fileResource.transferTo(buffer);
+                String responseText = buffer.toString();
 
                 String contentType = "text/plain";
                 if (requestTarget.endsWith(".html")) {
@@ -101,8 +113,5 @@ public class HttpServer {
 
     public int getPort() {
         return serverSocket.getLocalPort();
-    }
-    public void setRoot(Path rootDirectory) {
-        this.rootDirectory = rootDirectory;
     }
 }
