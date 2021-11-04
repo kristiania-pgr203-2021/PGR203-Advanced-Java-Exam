@@ -55,9 +55,11 @@ public class HttpServer {
 
             writeOkResponse(clientSocket, responseTxt, "txt/html");
 
-        } else if (fileTarget.equals("/api/newProduct")) {
+        } else if (fileTarget.equals("/api/addQuestions")) {
 
-            //Ikke i bruk
+            String responseTxt = "Her kan man legge til spørsmål";
+
+            writeOkResponse(clientSocket, responseTxt, "txt/html");
 
         } else if (fileTarget.equals("/api/categoryOptions")){
 
