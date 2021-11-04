@@ -1,14 +1,10 @@
-package no.kristiania.survey;
+package no.kristiania.http;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,15 +45,15 @@ public class HttpServer {
             fileTarget = requestTarget;
         }
 
-        if (fileTarget.equals("/api/questions")) {
+        if (fileTarget.equals("/api/newSurvey")) {
 
-            String responseTxt = "<h3>Her kommer det spørsmål!</h3>";
+            String responseTxt = "<h3>Submitted surveyName</h3>";
 
             writeOkResponse(clientSocket, responseTxt, "txt/html");
 
-        } else if (fileTarget.equals("/api/addQuestions")) {
+        } else if (fileTarget.equals("/api/newQuestion")) {
 
-            String responseTxt = "Her kan man legge til spørsmål";
+            String responseTxt = "Her kommer question+alternative";
 
             writeOkResponse(clientSocket, responseTxt, "txt/html");
 

@@ -1,7 +1,6 @@
-package no.kristiania.survey;
+package no.kristiania.http;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 
 public class SurveyManager {
     public static void main(String[] args) throws IOException {

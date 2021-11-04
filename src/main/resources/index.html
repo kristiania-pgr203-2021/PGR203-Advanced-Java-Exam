@@ -1,29 +1,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Kristiania Questionnaire</title>
+    <title>Kristiania Survey</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <h1>Questionnaire</h1>
 
-    <div id="questions"></div>
+    <h1>Surveys ( her kommer det et kulere navn 8) )</h1>
+
 
     <div>
-        <a href="addOption.html">Start survey</a>
+        <a href="addOption.html">Click here to join a survey</a>
     </div>
+
     <div>
-        <a href="newQuestionnaire.html">Create survey</a>
+        <a href="newSurvey.html">Click here to create a new survey</a>
     </div>
 </body>
-
-<script>
-    fetch("/api/questions")
-    .then(function(response) {
-        return response.text();
-    }).then(function (text) {
-        document.getElementById("questions").innerHTML = text;
-    });
-</script>
 </html>
