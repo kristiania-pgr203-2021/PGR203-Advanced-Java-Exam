@@ -3,7 +3,6 @@ package no.kristiania.jdbc;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,6 +19,17 @@ public class SurveysTest {
                 .hasNoNullFieldsOrProperties()
                 .usingRecursiveComparison()
                 .isEqualTo(survey);
+    }
+
+    @Test
+    void shouldListAllSurveys() throws SQLException {
+        Survey survey1 = exampleSurvey();
+        dao.save(survey1);
+        Survey survey2 = exampleSurvey();
+        dao.save(survey2);
+        assertThat(dao.listAll())
+                .extracting(Survey::getId)
+                .contains(survey1.getId(), survey2.getId());
     }
 
     private Survey exampleSurvey() {

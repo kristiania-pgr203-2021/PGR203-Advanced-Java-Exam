@@ -2,6 +2,8 @@ package no.kristiania.jdbc;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SurveyDao {
     private DataSource dataSource;
@@ -10,6 +12,7 @@ public class SurveyDao {
         this.dataSource = dataSource;
     }
 
+    //Insert into db and generate id
     public void save(Survey survey) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(
@@ -32,17 +35,33 @@ public class SurveyDao {
 
                 try (ResultSet rs = statement.executeQuery()) {
                     rs.next();
-                    return mapFromResultSet(rs);
+                    return resultFromResultSet(rs);
                 }
             }
         }
     }
 
-    private Survey mapFromResultSet(ResultSet rs) throws SQLException {
+
+    //Extracted method
+    private Survey resultFromResultSet(ResultSet rs) throws SQLException {
         Survey survey = new Survey();
         survey.setId(rs.getLong("id"));
         survey.setSurveyName(rs.getString("survey_name"));
         return survey;
     }
 
+    public List<Survey> listAll() throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("select * from surveys")) {
+                try (ResultSet rs = statement.executeQuery()) {
+                    ArrayList<Survey> result = new ArrayList<>();
+
+                    while (rs.next()) {
+                        result.add(resultFromResultSet(rs));
+                    }
+                    return result;
+                }
+            }
+        }
+    }
 }
