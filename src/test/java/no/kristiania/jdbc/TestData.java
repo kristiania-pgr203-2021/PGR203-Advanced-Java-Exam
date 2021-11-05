@@ -4,14 +4,11 @@ import org.flywaydb.core.Flyway;
 import org.h2.jdbcx.JdbcDataSource;
 
 import javax.sql.DataSource;
-import java.sql.SQLException;
 import java.util.Random;
 
 public class TestData {
 
-    private static Random random = new Random();
-
-    SurveyDao sDao = new SurveyDao(testDataSource());
+    private static final Random random = new Random();
 
     public static DataSource testDataSource() {
         JdbcDataSource dataSource = new JdbcDataSource();
@@ -23,21 +20,35 @@ public class TestData {
     public static String pickOne(String... alternates) {
         return alternates[random.nextInt(alternates.length)];
     }
-    public Survey exampleSurvey() {
+
+    public static Survey exampleSurvey() {
         Survey survey = new Survey();
         survey.setSurveyName(TestData.pickOne("Food allergies", "Color blindness", "Favorite soda", "Favorite passwords"));
         return survey;
     }
-    public Question exampleQuestion() throws SQLException {
-        Survey survey = exampleSurvey();
-        sDao.save(survey);
+
+    public static Question exampleQuestion() {
         Question question = new Question();
         question.setQuestionText(TestData.pickOne(
                 "Whats your favorite food?",
                 "Whats your favorite color?",
                 "Whats your favorite soda?",
                 "How do you choose your password?"));
-        question.setSurveyId(survey.getId());
         return question;
+    }
+
+    public static Alternative exampleAlternative() {
+        Alternative alternative = new Alternative();
+        alternative.setAlternative(TestData.pickOne(
+    "Taco", "Pizza", "Cola", "Urge", "password123", "password", "Blue", "Yellow"));
+        return alternative;
+    }
+
+    public static User exampleUser() {
+        User user = new User();
+        user.setLastName(TestData.pickOne("Wedvik", "Fung", "Johansen", "Nordmann", "Erikson"));
+        user.setFirstName(TestData.pickOne("Martin", "Jessica", "Ola", "Mette", "Erik"));
+        user.setLastName(TestData.pickOne("wedvik@gmail.com", "fung@gmail.com", "hestejente@hotmail.com", "heiheihei@live.no", "123fotball@hotmail.com"));
+        return user;
     }
 }

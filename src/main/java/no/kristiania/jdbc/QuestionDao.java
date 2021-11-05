@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class QuestionDao {
-    private DataSource dataSource;
+
+    private final DataSource dataSource;
 
     public QuestionDao(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -41,16 +42,19 @@ public class QuestionDao {
         }
     }
 
-    public List<Question> listAll() throws SQLException {
+    public List<Question> listQuestionsBySurveyId(long surveyId) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("select * from questions")) {
-                try (ResultSet rs = statement.executeQuery()) {
-                    ArrayList<Question> result = new ArrayList<>();
+            try (PreparedStatement statement = connection.prepareStatement(
+                    "select * from questions where survey_id = ?")) {
+                    statement.setLong(1, surveyId);
 
-                    while (rs.next()) {
-                        result.add(resultFromResultSet(rs));
+                try (ResultSet rs = statement.executeQuery()) {
+                    ArrayList<Question> question = new ArrayList<>();
+
+                    while (rs.next()){
+                        question.add(resultFromResultSet(rs));
                     }
-                    return result;
+                    return question;
                 }
             }
         }

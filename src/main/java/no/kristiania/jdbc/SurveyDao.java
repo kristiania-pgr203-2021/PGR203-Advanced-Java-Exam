@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SurveyDao {
-    private DataSource dataSource;
+
+    private final DataSource dataSource;
 
     public SurveyDao(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
-    //Insert into db and generate id
     public void save(Survey survey) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(
@@ -41,8 +41,6 @@ public class SurveyDao {
         }
     }
 
-
-    //Extracted method
     private Survey resultFromResultSet(ResultSet rs) throws SQLException {
         Survey survey = new Survey();
         survey.setId(rs.getLong("id"));
