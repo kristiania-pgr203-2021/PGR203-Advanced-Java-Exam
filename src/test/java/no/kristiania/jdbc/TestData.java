@@ -51,4 +51,5 @@ public class TestData {
         user.setEmail(TestData.pickOne("wedvik@gmail.com", "fung@gmail.com", "hestejente@hotmail.com", "heiheihei@live.no", "123fotball@hotmail.com"));
         return user;
     }
+
 }
