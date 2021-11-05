@@ -48,7 +48,7 @@ public class TestData {
         User user = new User();
         user.setLastName(TestData.pickOne("Wedvik", "Fung", "Johansen", "Nordmann", "Erikson"));
         user.setFirstName(TestData.pickOne("Martin", "Jessica", "Ola", "Mette", "Erik"));
-        user.setLastName(TestData.pickOne("wedvik@gmail.com", "fung@gmail.com", "hestejente@hotmail.com", "heiheihei@live.no", "123fotball@hotmail.com"));
+        user.setEmail(TestData.pickOne("wedvik@gmail.com", "fung@gmail.com", "hestejente@hotmail.com", "heiheihei@live.no", "123fotball@hotmail.com"));
         return user;
     }
 }

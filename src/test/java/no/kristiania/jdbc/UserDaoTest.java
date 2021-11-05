@@ -13,10 +13,25 @@ public class UserDaoTest {
     @Test
     void shouldCreateAndRetrieveUser() throws SQLException {
         User user = TestData.exampleUser();
+        dao.save(user);
+
+        System.out.println(user);
 
         assertThat(dao.retrieve(user.getId()))
                 .hasNoNullFieldsOrProperties()
                 .usingRecursiveComparison()
                 .isEqualTo(user);
     }
+
+    @Test
+    void shouldListAllUsers() throws SQLException {
+        User user1 = TestData.exampleUser();
+        dao.save(user1);
+        User user2 = TestData.exampleUser();
+        dao.save(user2);
+        assertThat(dao.listAll())
+                .extracting(User::getId)
+                .contains(user1.getId(), user2.getId());
+    }
+
 }
