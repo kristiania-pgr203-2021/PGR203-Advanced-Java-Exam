@@ -22,14 +22,13 @@ public class QuestionDaoTest {
 
     @Test
     void shouldListAllQuestions() throws SQLException {
-        Survey survey = new Survey();
-        survey.setSurveyName("test");
         Question question1 = testData.exampleQuestion();
         qDao.save(question1);
         Question question2 = testData.exampleQuestion();
         qDao.save(question2);
         assertThat(qDao.listAll())
-                .extracting(Question::getId);
+                .extracting(Question::getId)
+                .contains(question1.getId(), question2.getId());
     }
 
 }
