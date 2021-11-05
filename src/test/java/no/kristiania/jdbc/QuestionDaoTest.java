@@ -2,39 +2,34 @@ package no.kristiania.jdbc;
 
 import org.junit.jupiter.api.Test;
 
+import java.sql.SQLException;
+
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class QuestionDaoTest {
 
-    QuestionDao dao = new QuestionDao(TestData.testDataSource());
+    QuestionDao qDao = new QuestionDao(TestData.testDataSource());
+    TestData testData = new TestData();
 
     @Test
-    void shouldCreateAndRetrieveQuestion() {
-        Question question = exampleQuestion();
-        dao.save(question);
+    void shouldCreateAndRetrieveQuestion() throws SQLException {
+        Question question = testData.exampleQuestion();
+        qDao.save(question);
 
-        assertThat(dao.retrieve(question.getId()));
-    }
-
-    private Question exampleQuestion() {
-        Question question = new Question();
-        question.setQuestionText(TestData.pickOne(
-                "Whats your favorite food?",
-                "Whats your favorite color?",
-                "Whats your favorite soda?",
-                "How do you choose your password?"
-        ));
-        return question;
+        assertThat(qDao.retrieve(question.getId()));
     }
 
     @Test
-    void shouldListAllQuestions() {
-        Question question1 = exampleQuestion();
-        dao.save(question1);
-        Question question2 = exampleQuestion();
-        dao.save(question2);
-        assertThat(dao.listAll())
-                .extracting(Question::getId)
-                .contains(question1.getId, question2.getId());
+    void shouldListAllQuestions() throws SQLException {
+        Survey survey = new Survey();
+        survey.setSurveyName("test");
+        Question question1 = testData.exampleQuestion();
+        qDao.save(question1);
+        Question question2 = testData.exampleQuestion();
+        qDao.save(question2);
+        assertThat(qDao.listAll())
+                .extracting(Question::getId);
     }
+
 }

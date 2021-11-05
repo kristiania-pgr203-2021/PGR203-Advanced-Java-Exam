@@ -3,7 +3,7 @@ package no.kristiania.jdbc;
 public class Question {
     private Long id;
     private String questionText;
-    //private Long surveyId;
+    private Long surveyId;
 
     public void setQuestionText(String questionText) {
         this.questionText = questionText;
@@ -21,4 +21,20 @@ public class Question {
         this.id = id;
     }
 
+    public Long getSurveyId() {
+        return surveyId;
+    }
+
+    public void setSurveyId(Long surveyId) {
+        this.surveyId = surveyId;
+    }
+
+    @Override
+    public String toString() {
+        return "Question{" +
+                "id=" + id +
+                ", questionText='" + questionText + '\'' +
+                ", surveyId=" + surveyId +
+                '}';
+    }
 }

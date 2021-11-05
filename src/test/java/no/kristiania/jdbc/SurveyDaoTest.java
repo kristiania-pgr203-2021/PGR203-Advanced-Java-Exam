@@ -8,11 +8,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SurveyDaoTest {
 
+    TestData testData = new TestData();
     SurveyDao dao = new SurveyDao(TestData.testDataSource());
 
     @Test
     void shouldCreateAndRetrieveSurvey() throws SQLException {
-        Survey survey = exampleSurvey();
+        Survey survey = testData.exampleSurvey();
         dao.save(survey);
 
         assertThat(dao.retrieve(survey.getId()))
@@ -23,18 +24,13 @@ public class SurveyDaoTest {
 
     @Test
     void shouldListAllSurveys() throws SQLException {
-        Survey survey1 = exampleSurvey();
+        Survey survey1 = testData.exampleSurvey();
         dao.save(survey1);
-        Survey survey2 = exampleSurvey();
+        Survey survey2 = testData.exampleSurvey();
         dao.save(survey2);
         assertThat(dao.listAll())
                 .extracting(Survey::getId)
                 .contains(survey1.getId(), survey2.getId());
     }
 
-    private Survey exampleSurvey() {
-        Survey survey = new Survey();
-        survey.setSurveyName(TestData.pickOne("Food allergies", "Color blindness", "Favorite soda", "Favorite passwords"));
-        return survey;
-    }
 }
