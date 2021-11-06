@@ -4,37 +4,42 @@
     <title>Create question | kristiania Qustionnaire</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
-<h1>Add question</h1>
+<main>
+    <body>
+    <h1>Add question</h1>
 
-<div id="surveyName"></div>
-<div id="question"></div><br>
+    <div id="surveyName"></div>
+    <div id="question"></div><br>
 
-<from method="POST" action="/api/newQuestion">
-    <label>Question text: <input type="text" name="question_text" /></label>
-    <a href="newQuestions.html"><button>Add your question</button></a><br><br><br><br><br>
-    <h3>HER KOMMER EN DROPDOWN MENY AV SPØRSMÅL</h3><br>
-    <label>Alternative: <input type="text" name="alternative_text"></label>
-    <a href="newQuestions.html"><button>Add your alternative</button></a><br>
-</from>
+    <from method="POST" action="/api/newQuestion">
+        <label>Question text: <input type="text" name="question_text"/></label>
+        <a href="newQuestions.html">
+            <button>Add your question</button>
+        </a><br><br><br><br><br>
+        <h3>HER KOMMER EN DROPDOWN MENY AV SPØRSMÅL</h3><br>
+        <label>Alternative: <input type="text" name="alternative_text"></label>
+        <a href="newQuestions.html">
+            <button>Add your alternative</button>
+        </a><br>
+    </from>
 
 
-
-<div>
-    <a href="index.html">Return to frontpage</a>
-</div>
-</body>
+    <div>
+        <a href="index.html">Return to frontpage</a>
+    </div>
+    </body>
+</main>
 
 <script>
     fetch("/api/newSurvey")
-        .then(function(response) {
+        .then(function (response) {
             return response.text();
         }).then(function (text) {
         document.getElementById("surveyName").innerHTML = text;
     });
 
     fetch("/api/newQuestion")
-        .then(function(response) {
+        .then(function (response) {
             return response.text();
         }).then(function (text) {
         document.getElementById("question").innerHTML = text;

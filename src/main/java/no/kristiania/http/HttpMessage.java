@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpMessage {
-    public String startLine;
+    public static String startLine;
     public final Map<String, String> headerFields = new HashMap<>();
     public String messageBody;
 

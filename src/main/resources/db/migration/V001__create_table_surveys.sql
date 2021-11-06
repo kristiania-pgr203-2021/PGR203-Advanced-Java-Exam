@@ -4,3 +4,5 @@ create table Surveys
     survey_name varchar(100)
 
 );
+
+insert into surveys (survey_name) values ('Color blindness');

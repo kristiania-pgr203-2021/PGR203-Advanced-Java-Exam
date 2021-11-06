@@ -55,5 +55,4 @@ public class AnswerDaoTest {
                 .contains(answer1.getId(), answer2.getId());
     }
 
-
 }

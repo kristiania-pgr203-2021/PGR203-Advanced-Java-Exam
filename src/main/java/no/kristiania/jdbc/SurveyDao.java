@@ -3,7 +3,6 @@ package no.kristiania.jdbc;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class SurveyDao {
 
@@ -48,7 +47,7 @@ public class SurveyDao {
         return survey;
     }
 
-    public List<Survey> listAll() throws SQLException {
+    public ArrayList<Survey> listAll() throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("select * from surveys")) {
                 try (ResultSet rs = statement.executeQuery()) {

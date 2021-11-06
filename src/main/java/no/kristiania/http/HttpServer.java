@@ -1,15 +1,24 @@
 package no.kristiania.http;
 
+import no.kristiania.jdbc.Question;
+import no.kristiania.jdbc.QuestionDao;
+import no.kristiania.jdbc.Survey;
+import no.kristiania.jdbc.SurveyDao;
+import org.postgresql.ds.PGSimpleDataSource;
+
+import javax.sql.DataSource;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HttpServer {
     private final ServerSocket serverSocket;
+    private SurveyDao surveyDao;
 
     public HttpServer(int serverPort) throws IOException {
         serverSocket = new ServerSocket(serverPort);
@@ -22,12 +31,12 @@ public class HttpServer {
             while (true) {
                 handleClient();
             }
-        } catch (IOException e) {
+        } catch (IOException | SQLException e) {
             e.printStackTrace();
         }
     }
 
-    private void handleClient() throws IOException {
+    private void handleClient() throws IOException, SQLException {
 
         Socket clientSocket = serverSocket.accept();
 
@@ -46,14 +55,30 @@ public class HttpServer {
         }
 
         if (fileTarget.equals("/api/newSurvey")) {
+            //Map<>
+            SurveyDao dao = new SurveyDao(createDataSource());
+            Survey survey = new Survey();
+            survey.setSurveyName("TEST");
+            dao.save(survey);
 
-            String responseTxt = "<h3>Submitted surveyName</h3>";
+            String response = String.valueOf(dao.retrieve(survey.getId()));
 
-            writeOkResponse(clientSocket, responseTxt, "txt/html");
+            writeOkResponse(clientSocket, response, "txt/html");
 
         } else if (fileTarget.equals("/api/newQuestion")) {
 
-            String responseTxt = "Her kommer question+alternative";
+            SurveyDao dao = new SurveyDao(createDataSource());
+            Survey survey = new Survey();
+            survey.setSurveyName("TEST");
+            dao.save(survey);
+
+            QuestionDao dao1 = new QuestionDao(createDataSource());
+            Question question = new Question();
+            question.setQuestionText("HVA LIKER DU TIL MIDDAG?");
+            question.setSurveyId(survey.getId());
+            dao1.save(question);
+
+            String responseTxt = String.valueOf(dao1.retrieve(question.getId()));
 
             writeOkResponse(clientSocket, responseTxt, "txt/html");
 
@@ -108,8 +133,19 @@ public class HttpServer {
         clientSocket.getOutputStream().write(response.getBytes());
     }
 
-
     public int getPort() {
         return serverSocket.getLocalPort();
+    }
+
+    public void setSurveyDao(SurveyDao surveyDao) {
+        this.surveyDao = surveyDao;
+    }
+    private static DataSource createDataSource() {
+        PGSimpleDataSource dataSource = new PGSimpleDataSource();
+        dataSource.setUrl("jdbc:postgresql://localhost:5432/surveydb");
+        dataSource.setUser("surveyuser");
+        dataSource.setPassword("test");
+        //Flyway.configure().dataSource(dataSource).load().migrate();
+        return dataSource;
     }
 }

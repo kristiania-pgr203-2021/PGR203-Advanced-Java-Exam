@@ -25,4 +25,18 @@ public class HttpServerTest {
         HttpClient client = new HttpClient("localhost", server.getPort(), "/non-existing");
         assertEquals("File not found: /non-existing", client.getMessageBody());
     }
+     /*
+    @Test
+    void shouldCreateNewProduct() throws IOException {
+        HttpPostClient postClient = new HttpPostClient(
+                "localhost",
+                server.getPort(),
+                "/api/newProduct",
+                "category=1&productName=Kylling");
+        assertEquals(200, postClient.getStatusCode());
+        Products products = server.getProductsList().get(0);
+        assertEquals("Kylling", products.getProduct());
+    }
+
+      */
 }
