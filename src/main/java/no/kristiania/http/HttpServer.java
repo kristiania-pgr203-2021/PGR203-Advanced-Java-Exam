@@ -55,38 +55,47 @@ public class HttpServer {
         }
 
         if (fileTarget.equals("/api/newSurvey")) {
-            //Map<>
+            Map<String, String> queryMap = parseRequestParameters(httpMessage.messageBody);
             SurveyDao dao = new SurveyDao(createDataSource());
             Survey survey = new Survey();
-            survey.setSurveyName("TEST");
+            survey.setSurveyName(queryMap.get("surveyTitle"));
             dao.save(survey);
 
-            String response = String.valueOf(dao.retrieve(survey.getId()));
-
-            writeOkResponse(clientSocket, response, "txt/html");
+            writeOkResponse(clientSocket, "Survey added", "text/html");
 
         } else if (fileTarget.equals("/api/newQuestion")) {
 
-            SurveyDao dao = new SurveyDao(createDataSource());
-            Survey survey = new Survey();
-            survey.setSurveyName("TEST");
-            dao.save(survey);
-
-            QuestionDao dao1 = new QuestionDao(createDataSource());
+            Map<String, String> queryMap = parseRequestParameters(httpMessage.messageBody);
+            QuestionDao qDao = new QuestionDao(createDataSource());
             Question question = new Question();
-            question.setQuestionText("HVA LIKER DU TIL MIDDAG?");
-            question.setSurveyId(survey.getId());
-            dao1.save(question);
+            question.setQuestionText(queryMap.get("question_text"));
+            question.setSurveyId(Long.valueOf(queryMap.get("survey")));
 
-            String responseTxt = String.valueOf(dao1.retrieve(question.getId()));
+            qDao.save(question);
 
-            writeOkResponse(clientSocket, responseTxt, "txt/html");
+            /*
 
-        } else if (fileTarget.equals("/api/categoryOptions")){
+            for (Question questions : qDao.listQuestionsBySurveyId()) {
+                responseText += "<option value=" + (value++) + ">" + survey.getSurveyName() + "</option>";
+            }
 
-            //Ikke i bruk
+             */
 
 
+
+            writeOkResponse(clientSocket, "Question added", "text/html");
+
+        } else if (fileTarget.equals("/api/surveyOptions")){
+            String responseText = "";
+
+            int value = 1;
+            for (Survey survey : surveyDao.listAll()) {
+                responseText += "<option value=" + (value++) + ">" + survey.getSurveyName() + "</option>";
+            }
+
+
+
+            writeOkResponse(clientSocket, responseText, "text.html");
 
         } else {
             InputStream fileResource = getClass().getResourceAsStream(fileTarget);

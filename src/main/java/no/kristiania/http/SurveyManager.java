@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class SurveyManager {
     public static void main(String[] args) throws IOException {
-        HttpServer httpServer = new HttpServer(1964);
+        HttpServer httpServer = new HttpServer(1962);
         httpServer.setSurveyDao(new SurveyDao(createDataSource()));
     }
     private static DataSource createDataSource() {

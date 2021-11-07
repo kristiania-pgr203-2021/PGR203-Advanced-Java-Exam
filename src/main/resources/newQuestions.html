@@ -4,45 +4,35 @@
     <title>Create question | kristiania Qustionnaire</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<main>
-    <body>
-    <h1>Add question</h1>
+<body>
+    <main>
 
-    <div id="surveyName"></div>
-    <div id="question"></div><br>
+        <h1>Add question</h1>
 
-    <from method="POST" action="/api/newQuestion">
-        <label>Question text: <input type="text" name="question_text"/></label>
-        <a href="newQuestions.html">
-            <button>Add your question</button>
-        </a><br><br><br><br><br>
-        <h3>HER KOMMER EN DROPDOWN MENY AV SPØRSMÅL</h3><br>
-        <label>Alternative: <input type="text" name="alternative_text"></label>
-        <a href="newQuestions.html">
-            <button>Add your alternative</button>
-        </a><br>
-    </from>
+        <div id="surveyName"></div>
+
+        <form action="/api/newQuestion" method="post">
+            <label>Set survey: <select name="survey" id="survey"></select></label>
+            <label>Question text: <input type="text" name="question_text"/></label>
+            <a href="newQuestions.html"><button>Add your question</button></a>
+        </form>
 
 
-    <div>
-        <a href="index.html">Return to frontpage</a>
-    </div>
-    </body>
-</main>
+        <div>
+            <a href="index.html">Return to frontpage</a>
+        </div>
 
+        <div id="question"></div>
+
+    </main>
+</body>
 <script>
-    fetch("/api/newSurvey")
-        .then(function (response) {
-            return response.text();
-        }).then(function (text) {
-        document.getElementById("surveyName").innerHTML = text;
+    fetch("/api/surveyOptions").then(function (res) {
+        return res.text();
+    }).then(function(text) {
+        document.getElementById("survey").innerHTML = text;
     });
 
-    fetch("/api/newQuestion")
-        .then(function (response) {
-            return response.text();
-        }).then(function (text) {
-        document.getElementById("question").innerHTML = text;
-    });
+
 </script>
 </html>

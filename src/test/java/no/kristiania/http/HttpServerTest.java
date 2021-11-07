@@ -25,7 +25,14 @@ public class HttpServerTest {
         HttpClient client = new HttpClient("localhost", server.getPort(), "/non-existing");
         assertEquals("File not found: /non-existing", client.getMessageBody());
     }
-     /*
+
+    @Test
+    void shouldRespondWithRequestTarget200() throws IOException{
+        HttpClient client = new HttpClient("localhost", server.getPort(), "/index.html");
+        assertEquals(200, client.getStatusCode());
+    }
+
+    /*
     @Test
     void shouldCreateNewProduct() throws IOException {
         HttpPostClient postClient = new HttpPostClient(
