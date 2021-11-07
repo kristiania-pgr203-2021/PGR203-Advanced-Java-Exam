@@ -7,31 +7,54 @@
 <body>
     <main>
 
-        <h1>Add question</h1>
+        <div id="survey1"></div>
 
-        <div id="surveyName"></div>
+        <div>
+            <form action="/api/newSurvey" method="post">
+                <label><h3>Survey title:</h3><input type="text" name="survey_text"/></label>
+                <button>Add survey</button>
+            </form>
+            <button onclick="runSurveyName()">Jævel knapp</button>
+        </div>
 
-        <form action="/api/newQuestion" method="post">
-            <label>Set survey: <select name="survey" id="survey"></select></label>
-            <label>Question text: <input type="text" name="question_text"/></label>
-            <a href="newQuestions.html"><button>Add your question</button></a>
+        <br>
+        <div id="newQuestion">
+            <form action="/api/newQuestion" method="post">
+                <h3>Question:</h3>
+                <label>Set survey: <select name="survey" id="survey"></select></label>
+                <label>Question text: <input type="text" name="question_text"/></label>
+                <button>Add your question</button>
+            </form>
+        </div>
+
+        <form action="/api/newAlternative" method="post">
+            <h3>Create Alternative:</h3>
+            <label>Set question: <select name="question" id="question"></select></label>
+            <label>Alternative text: <input type="text" name="alternative_text"/></label>
+            <button>Add your question</button>
         </form>
-
 
         <div>
             <a href="index.html">Return to frontpage</a>
         </div>
 
-        <div id="question"></div>
-
     </main>
 </body>
+
 <script>
     fetch("/api/surveyOptions").then(function (res) {
         return res.text();
     }).then(function(text) {
         document.getElementById("survey").innerHTML = text;
     });
+
+    function runSurveyName() {
+        fetch("/api/surveyName").then(function (res) {
+            return res.text();
+        }).then(function (text) {
+            document.getElementById("survey1").innerHTML = text;
+        });
+    }
 
 
 </script>

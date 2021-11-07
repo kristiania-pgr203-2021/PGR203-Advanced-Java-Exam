@@ -19,6 +19,7 @@ import java.util.Map;
 public class HttpServer {
     private final ServerSocket serverSocket;
     private SurveyDao surveyDao;
+    private Survey survey;
 
     public HttpServer(int serverPort) throws IOException {
         serverSocket = new ServerSocket(serverPort);
@@ -37,7 +38,6 @@ public class HttpServer {
     }
 
     private void handleClient() throws IOException, SQLException {
-
         Socket clientSocket = serverSocket.accept();
 
         HttpMessage httpMessage = new HttpMessage(clientSocket);
@@ -57,11 +57,18 @@ public class HttpServer {
         if (fileTarget.equals("/api/newSurvey")) {
             Map<String, String> queryMap = parseRequestParameters(httpMessage.messageBody);
             SurveyDao dao = new SurveyDao(createDataSource());
-            Survey survey = new Survey();
-            survey.setSurveyName(queryMap.get("surveyTitle"));
+            this.survey = new Survey();
+            survey.setSurveyName(queryMap.get("survey_text"));
             dao.save(survey);
 
-            writeOkResponse(clientSocket, "Survey added", "text/html");
+            writeOk303Response(clientSocket, survey.toString(), "text/html");
+
+        }else if (fileTarget.equals("/api/surveyName")){
+                String responseTxt = "";
+
+                responseTxt += "<h3>" + survey.getSurveyName() + "</h3>";
+
+                writeOk200Response(clientSocket, responseTxt, "text.html");
 
         } else if (fileTarget.equals("/api/newQuestion")) {
 
@@ -80,10 +87,7 @@ public class HttpServer {
             }
 
              */
-
-
-
-            writeOkResponse(clientSocket, "Question added", "text/html");
+            writeOk303Response(clientSocket, "Question added", "text/html");
 
         } else if (fileTarget.equals("/api/surveyOptions")){
             String responseText = "";
@@ -93,9 +97,7 @@ public class HttpServer {
                 responseText += "<option value=" + (value++) + ">" + survey.getSurveyName() + "</option>";
             }
 
-
-
-            writeOkResponse(clientSocket, responseText, "text.html");
+            writeOk200Response(clientSocket, responseText, "text.html");
 
         } else {
             InputStream fileResource = getClass().getResourceAsStream(fileTarget);
@@ -108,7 +110,7 @@ public class HttpServer {
                 if (requestTarget.endsWith(".html")) {
                     contentType = "text/html";
                 }
-                writeOkResponse(clientSocket, responseText, contentType);
+                writeOk200Response(clientSocket, responseText, contentType);
                 return;
             }
 
@@ -132,8 +134,18 @@ public class HttpServer {
         }
         return queryMap;
     }
-    private void writeOkResponse(Socket clientSocket, String responseText, String contentType) throws IOException {
+    private void writeOk200Response(Socket clientSocket, String responseText, String contentType) throws IOException {
         String response = "HTTP/1.1 200 OK\r\n" +
+                "Content-Length: " + responseText.length() + "\r\n" +
+                "Content-Type: " + contentType + "\r\n" +
+                "Connection: close\r\n" +
+                "\r\n" +
+                responseText;
+        clientSocket.getOutputStream().write(response.getBytes());
+    }
+    private void writeOk303Response(Socket clientSocket, String responseText, String contentType) throws IOException {
+        String response = "HTTP/1.1 303 See Other\r\n" +
+                "Location: http://localhost:1962/newQuestions.html\r\n" +
                 "Content-Length: " + responseText.length() + "\r\n" +
                 "Content-Type: " + contentType + "\r\n" +
                 "Connection: close\r\n" +
