@@ -1,38 +1,41 @@
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Create question | kristiania Qustionnaire</title>
+    <meta charset=UTF-8">
+    <title>Create your own survey | Høyskolen Kristiania </title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <main>
 
-        <div id="survey1"></div>
-
-        <div>
-            <form action="/api/newSurvey" method="post">
+        <div id="newSurvey">
+            <h2 id="surveyName"></h2>
+            <form action="/api/newSurvey" method="post" accept-charset="utf-8">
                 <label><h3>Survey title:</h3><input type="text" name="survey_text"/></label>
                 <button>Add survey</button>
             </form>
-            <button onclick="runSurveyName()">Jævel knapp</button>
         </div>
 
         <br>
+
         <div id="newQuestion">
-            <form action="/api/newQuestion" method="post">
+            <form action="/api/newQuestion" method="post" accept-charset="utf-8">
                 <h3>Question:</h3>
                 <label>Set survey: <select name="survey" id="survey"></select></label>
                 <label>Question text: <input type="text" name="question_text"/></label>
-                <button>Add your question</button>
+                <button id="test">Add your question</button>
             </form>
         </div>
 
-        <form action="/api/newAlternative" method="post">
-            <h3>Create Alternative:</h3>
-            <label>Set question: <select name="question" id="question"></select></label>
-            <label>Alternative text: <input type="text" name="alternative_text"/></label>
-            <button>Add your question</button>
-        </form>
+        <br>
+
+        <div id="newAlternative">
+            <form action="/api/newAlternative" method="post">
+                <h3>Create Alternative:</h3>
+                <label>Set question: <select name="question" id="question"></select></label>
+                <label>Alternative text: <input type="text" name="alternative_text"/></label>
+                <button>Add your question</button>
+            </form>
+        </div>
 
         <div>
             <a href="index.html">Return to frontpage</a>
@@ -48,14 +51,11 @@
         document.getElementById("survey").innerHTML = text;
     });
 
-    function runSurveyName() {
-        fetch("/api/surveyName").then(function (res) {
+    fetch("/api/surveyName").then(function (res) {
             return res.text();
         }).then(function (text) {
-            document.getElementById("survey1").innerHTML = text;
+            document.getElementById("surveyName").innerHTML = text;
         });
-    }
-
 
 </script>
 </html>

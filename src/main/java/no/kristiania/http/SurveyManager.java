@@ -10,6 +10,9 @@ public class SurveyManager {
     public static void main(String[] args) throws IOException {
         HttpServer httpServer = new HttpServer(1962);
         httpServer.setSurveyDao(new SurveyDao(createDataSource()));
+        System.out.println("http://localhost:" + httpServer.getPort() + "/index.html");
+        System.out.println("http://localhost:" + httpServer.getPort() + "/newQuestions.html");
+
     }
     private static DataSource createDataSource() {
         PGSimpleDataSource dataSource = new PGSimpleDataSource();

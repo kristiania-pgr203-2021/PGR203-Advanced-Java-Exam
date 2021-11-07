@@ -10,8 +10,12 @@ import javax.sql.DataSource;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +24,7 @@ public class HttpServer {
     private final ServerSocket serverSocket;
     private SurveyDao surveyDao;
     private Survey survey;
+    private Question question;
 
     public HttpServer(int serverPort) throws IOException {
         serverSocket = new ServerSocket(serverPort);
@@ -58,25 +63,30 @@ public class HttpServer {
             Map<String, String> queryMap = parseRequestParameters(httpMessage.messageBody);
             SurveyDao dao = new SurveyDao(createDataSource());
             this.survey = new Survey();
-            survey.setSurveyName(queryMap.get("survey_text"));
+            String encodedValue = encodeValue(queryMap.get("survey_text"));
+            String decodedValue = decodeValue(queryMap.get("survey_text"));
+            System.out.println(decodedValue);
+            System.out.println(encodedValue);
+            survey.setSurveyName(decodedValue);
             dao.save(survey);
 
             writeOk303Response(clientSocket, survey.toString(), "text/html");
+        } else if (fileTarget.equals("/api/surveyName")) {
+            String responseTxt = "";
 
-        }else if (fileTarget.equals("/api/surveyName")){
-                String responseTxt = "";
-
-                responseTxt += "<h3>" + survey.getSurveyName() + "</h3>";
-
+            for (Survey survey : surveyDao.listAll()) {
+                responseTxt = "Newly added survey: " + survey.getSurveyName();
+            }
                 writeOk200Response(clientSocket, responseTxt, "text.html");
 
         } else if (fileTarget.equals("/api/newQuestion")) {
-
             Map<String, String> queryMap = parseRequestParameters(httpMessage.messageBody);
             QuestionDao qDao = new QuestionDao(createDataSource());
-            Question question = new Question();
-            question.setQuestionText(queryMap.get("question_text"));
+            this.question = new Question();
+            String decodedValue = decodeValue(queryMap.get("question_text"));
+            question.setQuestionText(decodedValue);
             question.setSurveyId(Long.valueOf(queryMap.get("survey")));
+            System.out.println(decodedValue);
 
             qDao.save(question);
 
@@ -89,7 +99,7 @@ public class HttpServer {
              */
             writeOk303Response(clientSocket, "Question added", "text/html");
 
-        } else if (fileTarget.equals("/api/surveyOptions")){
+        } else if (fileTarget.equals("/api/surveyOptions")) {
             String responseText = "";
 
             int value = 1;
@@ -98,6 +108,9 @@ public class HttpServer {
             }
 
             writeOk200Response(clientSocket, responseText, "text.html");
+        } else if (fileTarget.equals("/api/newAlternative")) {
+
+            //Skrive ut alternative
 
         } else {
             InputStream fileResource = getClass().getResourceAsStream(fileTarget);
@@ -134,19 +147,21 @@ public class HttpServer {
         }
         return queryMap;
     }
+
     private void writeOk200Response(Socket clientSocket, String responseText, String contentType) throws IOException {
         String response = "HTTP/1.1 200 OK\r\n" +
-                "Content-Length: " + responseText.length() + "\r\n" +
+                "Content-Length: " + responseText.getBytes().length + "\r\n" +
                 "Content-Type: " + contentType + "\r\n" +
                 "Connection: close\r\n" +
                 "\r\n" +
                 responseText;
         clientSocket.getOutputStream().write(response.getBytes());
     }
+
     private void writeOk303Response(Socket clientSocket, String responseText, String contentType) throws IOException {
         String response = "HTTP/1.1 303 See Other\r\n" +
                 "Location: http://localhost:1962/newQuestions.html\r\n" +
-                "Content-Length: " + responseText.length() + "\r\n" +
+                "Content-Length: " + responseText.getBytes().length + "\r\n" +
                 "Content-Type: " + contentType + "\r\n" +
                 "Connection: close\r\n" +
                 "\r\n" +
@@ -168,5 +183,19 @@ public class HttpServer {
         dataSource.setPassword("test");
         //Flyway.configure().dataSource(dataSource).load().migrate();
         return dataSource;
+    }
+    public static String decodeValue(String value) {
+        try {
+            return URLDecoder.decode(value, StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException ex) {
+            throw new RuntimeException(ex.getCause());
+        }
+    }
+    private static String encodeValue(String value) {
+        try {
+            return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException ex) {
+            throw new RuntimeException(ex.getCause());
+        }
     }
 }
