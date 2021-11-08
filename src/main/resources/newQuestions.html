@@ -1,12 +1,11 @@
 <html lang="en">
 <head>
     <meta charset=UTF-8">
-    <title>Create your own survey | Høyskolen Kristiania </title>
+    <title>Create your own survey | Kristiania </title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <main>
-
         <div id="newSurvey">
             <h2 id="surveyName"></h2>
             <form action="/api/newSurvey" method="post" accept-charset="utf-8">
@@ -14,48 +13,59 @@
                 <button>Add survey</button>
             </form>
         </div>
-
         <br>
 
         <div id="newQuestion">
             <form action="/api/newQuestion" method="post" accept-charset="utf-8">
                 <h3>Question:</h3>
-                <label>Set survey: <select name="survey" id="survey"></select></label>
                 <label>Question text: <input type="text" name="question_text"/></label>
-                <button id="test">Add your question</button>
+                <button>Add your question</button>
             </form>
         </div>
-
         <br>
 
         <div id="newAlternative">
-            <form action="/api/newAlternative" method="post">
+            <form action="/api/newAlternative" method="post" accept-charset="utf-8">
                 <h3>Create Alternative:</h3>
                 <label>Set question: <select name="question" id="question"></select></label>
-                <label>Alternative text: <input type="text" name="alternative_text"/></label>
-                <button>Add your question</button>
+                <label> Alternative text: <input type="text" name="alternative_text"/></label>
+                <button>Add your alternative</button>
             </form>
+
+            <form action="/api/listAlternativesByQuestion" method="post" accept-charset="utf-8">
+                <p>List your alternatives by question number: </p>
+                <label>Question number: <input type="text" name="questionId"></label>
+                <button>Submit</button>
+            </form>
+            <ol id="listAlternatives"></ol>
         </div>
 
         <div>
             <a href="index.html">Return to frontpage</a>
         </div>
-
     </main>
 </body>
 
 <script>
-    fetch("/api/surveyOptions").then(function (res) {
-        return res.text();
-    }).then(function(text) {
-        document.getElementById("survey").innerHTML = text;
-    });
 
     fetch("/api/surveyName").then(function (res) {
             return res.text();
         }).then(function (text) {
             document.getElementById("surveyName").innerHTML = text;
         });
+
+    fetch("/api/questionOptions").then(function (res) {
+        return res.text();
+    }).then(function (text) {
+        document.getElementById("question").innerHTML = text;
+    });
+
+    fetch("/api/listAlternatives").then(function (res) {
+        return res.text();
+    }).then(function (text) {
+        document.getElementById("listAlternatives").innerHTML = text;
+    });
+
 
 </script>
 </html>

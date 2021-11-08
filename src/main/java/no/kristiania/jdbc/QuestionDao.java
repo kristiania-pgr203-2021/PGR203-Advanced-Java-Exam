@@ -3,7 +3,6 @@ package no.kristiania.jdbc;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class QuestionDao {
 
@@ -42,7 +41,7 @@ public class QuestionDao {
         }
     }
 
-    public List<Question> listQuestionsBySurveyId(long surveyId) throws SQLException {
+    public ArrayList<Question> listQuestionsBySurveyId(long surveyId) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(
                     "select * from questions where survey_id = ?")) {
