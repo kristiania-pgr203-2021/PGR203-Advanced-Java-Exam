@@ -83,7 +83,7 @@ public class HttpServer {
             }
 
             this.surveyId = tmp;
-            writeOk200Response(clientSocket, responseTxt, "text.html");
+            writeOk200Response(clientSocket, responseTxt, "text/html");
 
             //TODO: Bruker lager spørsmål og sender inn i databasen, knyttet til surveyId (GET)
         } else if (fileTarget.equals("/api/newQuestion")) {
@@ -173,8 +173,13 @@ public class HttpServer {
 
                 String contentType = "text/plain";
                 if (requestTarget.endsWith(".html")) {
-                    contentType = "text/html";
+                    contentType = "text/html; charset=utf-8";
                 }
+
+                if (requestTarget.endsWith(".css")) {
+                    contentType = "text/css; charset=utf-8";
+                }
+
                 writeOk200Response(clientSocket, responseText, contentType);
                 return;
             }

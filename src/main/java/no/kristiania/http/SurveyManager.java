@@ -29,11 +29,8 @@ public class SurveyManager {
         }
 
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
-        dataSource.setUrl(properties.getProperty(
-                "dataSource.url",
-                "jdbc:postgresql://localhost:5432/surveydb"
-        ));
-        dataSource.setUser(properties.getProperty("dataSource.user", "surveyuser"));
+        dataSource.setUrl(properties.getProperty("dataSource.url"));
+        dataSource.setUser(properties.getProperty("dataSource.user"));
         dataSource.setPassword(properties.getProperty("dataSource.password"));
         Flyway.configure().dataSource(dataSource).load().migrate();
         return dataSource;
