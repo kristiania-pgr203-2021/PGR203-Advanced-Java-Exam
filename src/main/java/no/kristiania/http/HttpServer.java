@@ -1,9 +1,7 @@
 package no.kristiania.http;
 
 import no.kristiania.jdbc.*;
-import org.postgresql.ds.PGSimpleDataSource;
 
-import javax.sql.DataSource;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static no.kristiania.http.UrlEncoding.decodeValue;
-import static no.kristiania.http.UrlEncoding.encodeValue;
 
 public class HttpServer {
     private final ServerSocket serverSocket;
@@ -27,6 +24,8 @@ public class HttpServer {
     private long surveyId;
     private long questionId;
     private long tmpQuestionId;
+
+
 
     public HttpServer(int serverPort) throws IOException {
         serverSocket = new ServerSocket(serverPort);
@@ -60,18 +59,18 @@ public class HttpServer {
             fileTarget = requestTarget;
         }
 
+        //TODO: Bruker oppretter survey name og legger inn i databasen (GET)
         if (fileTarget.equals("/api/newSurvey")) {
+            String location = "/createSurvey.html";
             Map<String, String> queryMap = parseRequestParameters(httpMessage.messageBody);
-            SurveyDao dao = new SurveyDao(createDataSource());
+            SurveyDao dao = new SurveyDao(SurveyManager.createDataSource());
             this.survey = new Survey();
-            String encodedValue = encodeValue(queryMap.get("survey_text"));
             String decodedValue = decodeValue(queryMap.get("survey_text"));
-            System.out.println(decodedValue);
-            System.out.println(encodedValue);
             survey.setSurveyName(decodedValue);
             dao.save(survey);
-            writeOk303Response(clientSocket, survey.toString(), "text/html");
+            writeOk303Response(clientSocket, survey.toString(), "text/html", location);
 
+            //TODO: Webserver henter ut survey navn fra dtaabasen (POST)
         } else if (fileTarget.equals("/api/surveyName")) {
             String responseTxt = "";
             long tmp = 1;
@@ -79,20 +78,26 @@ public class HttpServer {
             for (Survey survey : surveyDao.listAll()) {
                 responseTxt = "Newly added survey: " + survey.getSurveyName();
                 tmp = survey.getId();
+                System.out.println(survey.getSurveyName());
+
             }
+
             this.surveyId = tmp;
             writeOk200Response(clientSocket, responseTxt, "text.html");
 
+            //TODO: Bruker lager spørsmål og sender inn i databasen, knyttet til surveyId (GET)
         } else if (fileTarget.equals("/api/newQuestion")) {
+            String location = "/createSurvey.html";
             Map<String, String> queryMap = parseRequestParameters(httpMessage.messageBody);
-            QuestionDao dao = new QuestionDao(createDataSource());
+            QuestionDao dao = new QuestionDao(SurveyManager.createDataSource());
             this.question = new Question();
             String decodedValue = decodeValue(queryMap.get("question_text"));
             question.setQuestionText(decodedValue);
             question.setSurveyId(surveyId);
             dao.save(question);
-            writeOk303Response(clientSocket, "Question added", "text/html");
+            writeOk303Response(clientSocket, "Question added", "text/html", location);
 
+            //TODO: Webserver lister ut spørsmålene som har blitt laget (POST)
         } else if (fileTarget.equals("/api/questionOptions")) {
             int value = 1;
             String responseTxt = "";
@@ -106,25 +111,29 @@ public class HttpServer {
             this.questionId = tmp;
             writeOk200Response(clientSocket, responseTxt, "text/html");
 
+            //TODO: Bruker velger gjeldende spørsmål og legger til alternativer (GET)
         } else if (fileTarget.equals("/api/newAlternative")) {
+            String location = "/createSurvey.html";
             Map<String, String> queryMap = parseRequestParameters(httpMessage.messageBody);
-            AlternativeDao dao = new AlternativeDao(createDataSource());
+            AlternativeDao dao = new AlternativeDao(SurveyManager.createDataSource());
             this.alternative = new Alternative();
             String decodedValue = decodeValue(queryMap.get("alternative_text"));
             alternative.setAlternative(decodedValue);
             alternative.setQuestionId(questionId);
             dao.save(alternative);
 
-            writeOk303Response(clientSocket, "Alternative added", "text/html");
+            writeOk303Response(clientSocket, "Alternative added", "text/html", location);
 
-        } else if (fileTarget.equals("/api/listAlternativesByQuestion")){
+            //TODO: Bruker velger spørsmål som de ønsker å liste ut alt ifra (POST)
+        } else if (fileTarget.equals("/api/listAlternativesByQuestion")) {
+            String location = "/createSurvey.html";
             Map<String, String> queryMap = parseRequestParameters(httpMessage.messageBody);
             this.tmpQuestionId = Long.parseLong(queryMap.get("questionId"));
-            writeOk303Response(clientSocket, "Question ID added", "text/html");
+            writeOk303Response(clientSocket, "Question ID added", "text/html", location);
 
+            //TODO: Webserver lister ut alle alternativene til ett spesifikt spørsmål (GET)
         } else if (fileTarget.equals("/api/listAlternatives")) {
             String responseTxt = "";
-
             for (Alternative alternative : alternativeDao.listAlternativesByQuestionId(tmpQuestionId)) {
                 responseTxt += "<li>" + alternative.getAlternative() + "</li>";
                 System.out.println(responseTxt);
@@ -132,15 +141,27 @@ public class HttpServer {
 
             writeOk200Response(clientSocket, responseTxt, "text/html");
 
+            //TODO: Viser alle survyene i en scroll bar
         } else if (fileTarget.equals("/api/surveyOptions")) {
             int value = 1;
             String responseText = "";
 
             for (Survey survey : surveyDao.listAll()) {
-                responseText += "<option value=" + (value++) + ">" + survey.getSurveyName() + "</option>";
-                System.out.println(responseText);
+                responseText += "<option value=" + (value++) + ">" + "ID: " + survey.getId() + " " + "Name: " + survey.getSurveyName() + "</option>";
             }
             writeOk200Response(clientSocket, responseText, "text/html");
+
+            //TODO: POST
+        } else if (fileTarget.equals("/api/selectSurvey")) {
+            String location = "/selectSurvey.html";
+            SurveyDao dao = new SurveyDao(SurveyManager.createDataSource());
+            Map<String, String> queryMap = parseRequestParameters(httpMessage.messageBody);
+            String test = queryMap.get("surveyID");
+            dao.delete(Integer.parseInt(queryMap.get("surveyID")));
+
+            System.out.println(test);
+
+            writeOk303Response(clientSocket, "Alternative added", "text/html", location);
 
         } else {
             InputStream fileResource = getClass().getResourceAsStream(fileTarget);
@@ -149,8 +170,8 @@ public class HttpServer {
                 ByteArrayOutputStream buffer = new ByteArrayOutputStream();
                 fileResource.transferTo(buffer);
                 String responseText = buffer.toString();
-                String contentType = "text/plain";
 
+                String contentType = "text/plain";
                 if (requestTarget.endsWith(".html")) {
                     contentType = "text/html";
                 }
@@ -189,9 +210,9 @@ public class HttpServer {
         clientSocket.getOutputStream().write(response.getBytes());
     }
 
-    private void writeOk303Response(Socket clientSocket, String responseText, String contentType) throws IOException {
+    private void writeOk303Response(Socket clientSocket, String responseText, String contentType, String location) throws IOException {
         String response = "HTTP/1.1 303 See Other\r\n" +
-                "Location: http://localhost:1962/newQuestions.html\r\n" +
+                "Location: http://localhost:" + getPort() + location + "\r\n" +
                 "Content-Length: " + responseText.getBytes().length + "\r\n" +
                 "Content-Type: " + contentType + "\r\n" +
                 "Connection: close\r\n" +
@@ -214,14 +235,5 @@ public class HttpServer {
 
     public void setAlternativeDao(AlternativeDao alternativeDao) {
         this.alternativeDao = alternativeDao;
-    }
-
-    private static DataSource createDataSource() {
-        PGSimpleDataSource dataSource = new PGSimpleDataSource();
-        dataSource.setUrl("jdbc:postgresql://localhost:5432/surveydb");
-        dataSource.setUser("surveyuser");
-        dataSource.setPassword("test");
-        //Flyway.configure().dataSource(dataSource).load().migrate();
-        return dataSource;
     }
 }

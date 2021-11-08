@@ -6,7 +6,7 @@
 </head>
 <body>
     <main>
-        <div id="newSurvey">
+        <div id="survey_div">
             <h2 id="surveyName"></h2>
             <form action="/api/newSurvey" method="post" accept-charset="utf-8">
                 <label><h3>Survey title:</h3><input type="text" name="survey_text"/></label>
@@ -15,7 +15,7 @@
         </div>
         <br>
 
-        <div id="newQuestion">
+        <div id="question_div">
             <form action="/api/newQuestion" method="post" accept-charset="utf-8">
                 <h3>Question:</h3>
                 <label>Question text: <input type="text" name="question_text"/></label>
@@ -24,7 +24,7 @@
         </div>
         <br>
 
-        <div id="newAlternative">
+        <div id="alternative_div">
             <form action="/api/newAlternative" method="post" accept-charset="utf-8">
                 <h3>Create Alternative:</h3>
                 <label>Set question: <select name="question" id="question"></select></label>
@@ -38,6 +38,13 @@
                 <button>Submit</button>
             </form>
             <ol id="listAlternatives"></ol>
+
+            <form action="/api/updateQuestion" method="post" accept-charset="utf-8">
+                <p>Edit your question here: </p>
+                <label>Question number: <input type="text" name="questionId"></label>
+                <label>Question text: <input type="text" name="questionText"></label>
+                <button>Update</button>
+            </form>
         </div>
 
         <div>
@@ -65,7 +72,6 @@
     }).then(function (text) {
         document.getElementById("listAlternatives").innerHTML = text;
     });
-
 
 </script>
 </html>

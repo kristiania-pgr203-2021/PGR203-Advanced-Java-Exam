@@ -1,0 +1,52 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit | Survey </title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <main>
+        <h1>Edit a existing survey</h1>
+
+        <div id="survey_div">
+            <form action="/api/selectSurvey" method="POST" accept-charset="utf-8">
+                <label>Which survey do you want to edit from? <select id="survey"></select></label>
+                <label><input type="text" name="surveyID"/></label>
+                <button>Select</button>
+            </form>
+        </div>
+        <br>
+
+        <div id="selected_survey_div">
+            <div id="selected_survey">
+                <h3>Survey name:_______[EDIT]</h3>
+                <p>Question:______[EDIT]</p>
+                <p>Alternative: 1._______ [EDIT] Alternative: 2._______ [EDIT]</p><br>
+                <p>Question:______[EDIT]</p>
+                <p>Alternative: 1._______ [EDIT] Alternative: 2._______ [EDIT]</p><br>
+                <p>Question:______[EDIT]</p>
+                <p>Alternative: 1._______ [EDIT] Alternative: 2._______ [EDIT]</p><br>
+            </div>
+
+            <form action="/api/newQuestion" method="post" accept-charset="utf-8">
+                <h3>Question:</h3>
+                <label>Question text: <input type="text" name="question_text"/></label>
+                <button id="test">Add your question</button>
+            </form>
+        </div>
+
+        <div>
+            <a href="index.html">Return to frontpage</a>
+        </div>
+    </main>
+</body>
+
+<script>
+    fetch("/api/surveyOptions").then(function (res) {
+        return res.text();
+    }).then(function(text) {
+        document.getElementById("survey").innerHTML = text;
+    });
+</script>
+</html>

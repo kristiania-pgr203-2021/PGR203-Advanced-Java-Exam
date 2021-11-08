@@ -30,5 +30,16 @@ public class SurveyDaoTest {
                 .extracting(Survey::getId)
                 .contains(survey1.getId(), survey2.getId());
     }
+    /*
+    @Test
+    void shouldDeleteSurvey() throws SQLException {
+        Survey survey = testData.exampleSurvey();
+        dao.save(survey);
+        System.out.println(survey);
+        dao.delete(survey);
+        assertThat(dao.listAll())
+                .doesNotContain(survey);
+    }
 
+     */
 }

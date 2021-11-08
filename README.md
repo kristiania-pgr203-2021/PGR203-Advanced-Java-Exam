@@ -70,3 +70,13 @@
 * [x] Fikse jallaknappen AKA refresh
 * [ ] Bedre navngivning
 * [ ] Bedre feilhåndtering
+* [ ] Endre måten daoene lagerer fra input slik at det ikke lagres blank / null til databasen, men at det da heller sendes en 400 request error.(Eksempel kode under)
+* [ ] Fikse Jar URL encode/decode       
+
+
+                    eksempel: if (person.getFirstName()= null || person.getFirstName().isBlank()){
+                                return new HttpMessage(
+                                            "HTTP/1.1 400 request error",          
+                                            "<h1>First name must be provided</h1>"
+                                );
+                              }

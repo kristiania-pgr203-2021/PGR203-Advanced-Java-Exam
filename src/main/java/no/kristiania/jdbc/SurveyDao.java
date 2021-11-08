@@ -27,6 +27,15 @@ public class SurveyDao {
         }
     }
 
+    public void delete(int id) throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("delete from surveys where id = ?")) {
+                statement.setLong(1, id);
+                statement.executeUpdate();
+            }
+        }
+    }
+
     public Survey retrieve(long id) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("select * from surveys where id = ?")) {
