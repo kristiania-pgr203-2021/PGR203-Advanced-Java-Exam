@@ -28,6 +28,23 @@ public class QuestionDao {
         }
     }
 
+    public void deleteBySurveyId(int id) throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("delete from questions where survey_id = ?")) {
+                statement.setLong(1, id);
+                statement.executeUpdate();
+            }
+        }
+    }
+    public void delete(int id) throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("delete from questions where id = ?")) {
+                statement.setLong(1, id);
+                statement.executeUpdate();
+            }
+        }
+    }
+
     public Question retrieve(Long id) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("select * from questions where id = ?")) {
