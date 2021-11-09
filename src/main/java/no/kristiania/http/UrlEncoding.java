@@ -7,6 +7,8 @@ import java.nio.charset.StandardCharsets;
 
 public class UrlEncoding {
 
+    private static String newString;
+
     public static String encodeValue(String value) {
         try {
             return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
@@ -22,5 +24,16 @@ public class UrlEncoding {
             throw new RuntimeException(ex.getCause());
         }
     }
+
+
+    public static  String utf8Value(String value) {
+        try {
+         return new String(value.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException ex) {
+            throw new RuntimeException(ex.getCause());
+        }
+    }
+
+
 
 }

@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static no.kristiania.http.UrlEncoding.decodeValue;
+import static no.kristiania.http.UrlEncoding.utf8Value;
 
 public class HttpServer {
     private final ServerSocket serverSocket;
@@ -68,7 +69,12 @@ public class HttpServer {
             String decodedValue = decodeValue(queryMap.get("survey_text"));
             survey.setSurveyName(decodedValue);
             dao.save(survey);
-            writeOk303Response(clientSocket, survey.toString(), "text/html", location);
+
+
+            //String test1 = new String("æåæ".getBytes("UTF-8"));
+
+
+            writeOk303Response(clientSocket, "Survey added", "text/html", location);
 
             //TODO: Webserver henter ut survey navn fra dtaabasen (POST)
         } else if (fileTarget.equals("/api/surveyName")) {
@@ -76,7 +82,8 @@ public class HttpServer {
             long tmp = 1;
 
             for (Survey survey : surveyDao.listAll()) {
-                responseTxt = "Newly added survey: " + survey.getSurveyName();
+                //String encoded = new String(survey.getSurveyName().getBytes("UTF-8"));
+                responseTxt = "Newly added survey: " + utf8Value(survey.getSurveyName());
                 tmp = survey.getId();
                 System.out.println(survey.getSurveyName());
 
@@ -104,7 +111,7 @@ public class HttpServer {
             long tmp = 0;
             System.out.println(responseTxt);
             for (Question question: questionDao.listQuestionsBySurveyId(surveyId)) {
-                responseTxt +=  "<option value=" + (value++) + ">" + question.getId() + ". "+question.getQuestionText() + "</option>";
+                responseTxt +=  "<option value=" + (value++) + ">" + question.getId() + ". " + utf8Value(question.getQuestionText()) + "</option>";
                 tmp = question.getId();
                 System.out.println(responseTxt);
             }
@@ -135,7 +142,7 @@ public class HttpServer {
         } else if (fileTarget.equals("/api/listAlternatives")) {
             String responseTxt = "";
             for (Alternative alternative : alternativeDao.listAlternativesByQuestionId(tmpQuestionId)) {
-                responseTxt += "<li>" + alternative.getAlternative() + "</li>";
+                responseTxt += "<li>" + utf8Value(alternative.getAlternative()) + "</li>";
                 System.out.println(responseTxt);
             }
 
@@ -225,6 +232,8 @@ public class HttpServer {
                 responseText;
         clientSocket.getOutputStream().write(response.getBytes());
     }
+
+
 
     public int getPort() {
         return serverSocket.getLocalPort();
