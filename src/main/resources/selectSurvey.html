@@ -50,32 +50,40 @@
             </form>
         </div>
         <div id="question_div">
-            <h3>Edit questions</h3>
+            <h3>Edit question</h3>
             <form action="/api/editQuestion" method="post" accept-charset="utf-8">
-                <label>Write question ID: <input type="text" name="surveyID"/></label>
-                <label>Set new question text: <input type="text" name="surveyName"/></label>
+                <label>Write question ID: <input type="text" name="questionId"/></label>
+                <label>Set new question text: <input type="text" name="questionName"/></label>
+                <button>Update</button>
+            </form>
+        </div>
+        <br>
+        <div id="allAlternatives_div">
+            <form action="/api/getAlternativesById" method="post" accept-charset="UTF-8">
+                <h3>Alternative list</h3>
+                <label>Set question ID to se all belonging alternatives: <input type="text" name="questionId"></label>
+                <button>Select</button>
+                <h4>All Alternatives:</h4>
+                <div id="alternative"></div>
+            </form>
+        </div>
+        <div id="deleteAlternative_div">
+            <h3>Delete alternative</h3>
+            <form action="/api/deleteAlternative" method="POST" accept-charset="utf-8">
+                <label>Set alternative ID: <input type="text" name="alternativeId"/></label>
+                <button>Delete</button>
+            </form>
+        </div>
+        <div id="alternative_div">
+            <h3>Edit alternative</h3>
+            <form action="/api/editAlternative" method="post" accept-charset="utf-8">
+                <label>Set alternative ID: <input type="text" name="alternativeId"/></label>
+                <label>Set new alternative text: <input type="text" name="alternativeName"/></label>
                 <button>Update</button>
             </form>
         </div>
         <div>
-                <h3>Survey name:_______[EDIT]</h3>
-                <p>Question:______[EDIT]</p>
-                <p>Alternative: 1._______ [EDIT] Alternative: 2._______ [EDIT]</p><br>
-                <p>Question:______[EDIT]</p>
-                <p>Alternative: 1._______ [EDIT] Alternative: 2._______ [EDIT]</p><br>
-                <p>Question:______[EDIT]</p>
-                <p>Alternative: 1._______ [EDIT] Alternative: 2._______ [EDIT]</p><br>
-            </div>
-
-            <form action="/api/newQuestion" method="post" accept-charset="utf-8">
-                <h3>Question:</h3>
-                <label>Question text: <input type="text" name="question_text"/></label>
-                <button id="test">Add your question</button>
-            </form>
-        </div>
-
-        <div>
-            <a href="index.html">Return to frontpage</a>
+            <button><a href="index.html">Return to frontpage</a></button>
         </div>
     </main>
 </body>
@@ -90,6 +98,11 @@
         return res.text();
     }).then(function(text) {
         document.getElementById("question").innerHTML = text;
+    });
+    fetch("/api/newAlternativesOptions").then(function (res) {
+        return res.text();
+    }).then(function(text) {
+        document.getElementById("alternative").innerHTML = text;
     });
 
 </script>

@@ -113,7 +113,7 @@ public class HttpServer {
             for (Question question : questionDao.listQuestionsBySurveyId(surveyId)) {
                 responseTxt += "<option value=" + (value++) + ">" + question.getId() + ". " + utf8Value(question.getQuestionText()) + "</option>";
                 tmp = question.getId();
-                System.out.println(responseTxt);
+                System.out.println("og denne ser jeg etter" + responseTxt);
             }
             this.questionId = tmp;
             writeOk200Response(clientSocket, responseTxt, "text/html");
@@ -125,9 +125,12 @@ public class HttpServer {
             AlternativeDao dao = new AlternativeDao(SurveyManager.createDataSource());
             this.alternative = new Alternative();
             String decodedValue = decodeValue(queryMap.get("alternative_text"));
+            int id = Integer.parseInt(queryMap.get("question"));
+            System.out.println("denne ser jeg etter: " + id);
             alternative.setAlternative(decodedValue);
-            alternative.setQuestionId(questionId);
+            alternative.setQuestionId(tmpQuestionId);
             dao.save(alternative);
+            System.out.println(tmpQuestionId);
 
             writeOk303Response(clientSocket, "Alternative added", "text/html", location);
 
@@ -168,6 +171,32 @@ public class HttpServer {
             dao.update(id, decodeValue(name));
 
             writeOk303Response(clientSocket, "Survey edited", "text/html", location);
+
+            //TODO: Finner id til question og endrer navnet på den
+        } else if (fileTarget.equals("/api/editQuestion")) {
+            String location = "/selectSurvey.html";
+            Map<String, String> queryMap = parseRequestParameters(httpMessage.messageBody);
+            QuestionDao dao = new QuestionDao(SurveyManager.createDataSource());
+
+            Long id = Long.valueOf(queryMap.get("questionId"));
+            String name = queryMap.get("questionName");
+            dao.update(id, decodeValue(name));
+
+            writeOk303Response(clientSocket, "Question edited", "text/html", location);
+
+            //TODO: Finner id til alternative og endrer navnet på den
+        } else if (fileTarget.equals("/api/editAlternative")) {
+            String location = "/selectSurvey.html";
+            Map<String, String> queryMap = parseRequestParameters(httpMessage.messageBody);
+            AlternativeDao dao = new AlternativeDao(SurveyManager.createDataSource());
+
+            Long id = Long.valueOf(queryMap.get("alternativeId"));
+            String name = queryMap.get("alternativeName");
+            dao.update(id, decodeValue(name));
+
+            writeOk303Response(clientSocket, "Alternative edited", "text/html", location);
+
+            //TODO: lister ut alle questions tilhørende et survey etter id fra surveyId
         } else if (fileTarget.equals("/api/newQuestionOptions")) {
 
            String  Test = "";
@@ -177,12 +206,34 @@ public class HttpServer {
 
             writeOk200Response(clientSocket, Test, "text/html");
 
+            //TODO: lister ut alle alternatives tilhørende et question etter id fra questionId
+        } else if (fileTarget.equals("/api/newAlternativesOptions")) {
 
+            String  Test = "";
+            for (Alternative alternative : alternativeDao.listAlternativesByQuestionId(questionId)) {
+                Test += "<p>" + "ID: " + alternative.getId() + " " + "Alternative text: " + utf8Value(alternative.getAlternative()) + "</p>";
+            }
+
+            writeOk200Response(clientSocket, Test, "text/html");
+
+            //TODO: Henter question ID for å så sette det i questionId
         } else if (fileTarget.equals("/api/getQuestionById")){
             String location = "/selectSurvey.html";
             Map<String, String> queryMap = parseRequestParameters(httpMessage.messageBody);
 
             int id = Integer.parseInt(queryMap.get("surveyID"));
+            this.questionId = id;
+            System.out.println(questionId);
+            System.out.println(id);
+
+            writeOk303Response(clientSocket, "survey id set", "text/html", location);
+
+            //TODO: Henter question ID for å sette veriden i questionId
+        } else if (fileTarget.equals("/api/getAlternativesById")){
+            String location = "/selectSurvey.html";
+            Map<String, String> queryMap = parseRequestParameters(httpMessage.messageBody);
+
+            Long id = Long.valueOf(queryMap.get("questionId"));
             this.questionId = id;
             System.out.println(questionId);
             System.out.println(id);
@@ -198,7 +249,7 @@ public class HttpServer {
             for (Question question : questionDao.listQuestionsBySurveyId(Long.parseLong(idInput))) {
                 System.out.println(question.getSurveyId());
                 for (Alternative alternative : alternativeDao.listAlternativesByQuestionId(question.getId())) {
-                    alternativeDao.delete(Math.toIntExact(alternative.getQuestionId()));
+                    alternativeDao.deleteByQuestionId(Math.toIntExact(alternative.getQuestionId()));
                 }
             }
             for (Question dq : questionDao.listQuestionsBySurveyId(Long.parseLong(idInput))) {
@@ -210,6 +261,7 @@ public class HttpServer {
 
             writeOk303Response(clientSocket, "Alternative added", "text/html", location);
 
+            //TODO: Sletter question og tilhørende alternatives
         } else if (fileTarget.equals("/api/deleteQuestion")) {
                 String location = "/selectSurvey.html";
                 QuestionDao qDao = new QuestionDao(SurveyManager.createDataSource());
@@ -217,7 +269,7 @@ public class HttpServer {
                 String idInput = queryMap.get("questionID");
 
                 for (Alternative alternative: alternativeDao.listAlternativesByQuestionId(Long.parseLong(idInput))){
-                    alternativeDao.delete(Math.toIntExact(alternative.getQuestionId()));
+                    alternativeDao.deleteByQuestionId(Math.toIntExact(alternative.getQuestionId()));
                 }
 
 
@@ -226,6 +278,19 @@ public class HttpServer {
                 System.out.println(idInput);
 
                 writeOk303Response(clientSocket, "deleted", "text/html", location);
+
+            //TODO: Sletter alternative
+        } else if (fileTarget.equals("/api/deleteAlternative")) {
+            String location = "/selectSurvey.html";
+            AlternativeDao aDao = new AlternativeDao(SurveyManager.createDataSource());
+            Map<String, String> queryMap = parseRequestParameters(httpMessage.messageBody);
+            String idInput = queryMap.get("alternativeId");
+
+            aDao.delete(Integer.parseInt(idInput));
+
+            System.out.println(idInput);
+
+            writeOk303Response(clientSocket, "deleted", "text/html", location);
 
         } else {
             InputStream fileResource = getClass().getResourceAsStream(fileTarget);

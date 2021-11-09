@@ -10,7 +10,8 @@ main {
     margin: auto;
 }
 
-#survey_div, #question_div, #alternative_div, #selected_survey_div, #allSurveys_div, #allQuestions_div, #deleteSurvey_div {
+#survey_div, #question_div, #alternative_div, #selected_survey_div, #allSurveys_div, #allQuestions_div, #deleteSurvey_div,
+#allAlternatives_div, #deleteAlternative_div{
     background-color: white;
     padding: 1em 1em;
     border-radius: 0.5em;
