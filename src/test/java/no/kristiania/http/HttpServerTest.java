@@ -31,19 +31,15 @@ public class HttpServerTest {
         HttpClient client = new HttpClient("localhost", server.getPort(), "/index.html");
         assertEquals(200, client.getStatusCode());
     }
-
-    /*
     @Test
-    void shouldCreateNewProduct() throws IOException {
+    void shouldCreateNewSurvey() throws IOException {
+        server.addController("/api/newSurvey", new newSurveyController());
         HttpPostClient postClient = new HttpPostClient(
                 "localhost",
                 server.getPort(),
-                "/api/newProduct",
-                "category=1&productName=Kylling");
-        assertEquals(200, postClient.getStatusCode());
-        Products products = server.getProductsList().get(0);
-        assertEquals("Kylling", products.getProduct());
+                "/api/newSurvey",
+                "survey_text=New+Survey");
+        assertEquals(303, postClient.getStatusCode());
+        assertEquals("New Survey", server.getSurvey().getSurveyName());
     }
-
-      */
 }

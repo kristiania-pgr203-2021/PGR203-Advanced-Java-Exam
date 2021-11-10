@@ -27,6 +27,17 @@ public class HttpServer {
     private long tmpQuestionId;
     private Long questionIdForAlternative;
 
+    public Survey getSurvey() {
+        return survey;
+    }
+
+    public Question getQuestion() {
+        return question;
+    }
+
+    public Alternative getAlternative() {
+        return alternative;
+    }
 
     public HttpServer(int serverPort) throws IOException {
         serverSocket = new ServerSocket(serverPort);
