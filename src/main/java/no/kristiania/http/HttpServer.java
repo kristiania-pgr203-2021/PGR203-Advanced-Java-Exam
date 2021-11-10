@@ -301,14 +301,18 @@ public class HttpServer {
                 String contentType = "text/plain";
                 if (requestTarget.endsWith(".html")) {
                     contentType = "text/html; charset=utf-8";
+                    writeOk200Response(clientSocket, responseText, contentType);
                 }
 
                 if (requestTarget.endsWith(".css")) {
                     contentType = "text/css; charset=utf-8";
+                    writeOk200Response(clientSocket, responseText, contentType);
                 }
 
-                writeOk200Response(clientSocket, responseText, contentType);
-                return;
+                if (requestTarget.endsWith("/")) {
+                    String location = "/index.html";
+                    writeOk303Response(clientSocket, "index.html", contentType, location);
+                }
             }
 
             String responseText = "File not found: " + requestTarget;

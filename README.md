@@ -32,11 +32,11 @@
 
 ### Koden
 
-* [ ] `mvn package` bygger en executable jar-fil
+* [x] `mvn package` bygger en executable jar-fil
 * [ ] Koden inneholder et godt sett med tester
-* [ ] `java -jar target/...jar` (etter `mvn package`) lar bruker legge til og liste ut data fra databasen via webgrensesnitt
-* [ ] Serveren leser HTML-filer fra JAR-filen slik at den ikke er avhengig av å kjøre i samme directory som kildekoden
-* [ ] Programmet leser `dataSource.url`, `dataSource.username` og `dataSource.password` fra `pgr203.properties` for å connecte til databasen
+* [x] `java -jar target/...jar` (etter `mvn package`) lar bruker legge til og liste ut data fra databasen via webgrensesnitt
+* [x] Serveren leser HTML-filer fra JAR-filen slik at den ikke er avhengig av å kjøre i samme directory som kildekoden
+* [x] Programmet leser `dataSource.url`, `dataSource.username` og `dataSource.password` fra `pgr203.properties` for å connecte til databasen
 * [x] Programmet bruker Flywaydb for å sette opp databaseskjema
 * [ ] Server skriver nyttige loggmeldinger, inkludert informasjon om hvilken URL den kjører på ved oppstart
 
@@ -58,7 +58,7 @@
 * [x] Når brukeren skriver inn en tekst på norsk må man passe på å få encoding riktig. Klarer dere å lage en <form> med action=POST og encoding=UTF-8 som fungerer med norske tegn? Klarer dere å få æøå til å fungere i tester som gjør både POST og GET?
 * [ ] Før en bruker svarer på et spørsmål hadde det vært fint å la brukeren registrere navnet sitt. Klarer dere å implementere dette med cookies? Lag en form med en POST request der serveren sender tilbake Set-Cookie headeren. Browseren vil sende en Cookie header tilbake i alle requester. Bruk denne til å legge inn navnet på brukerens svar
 * [ ] Dersom noe alvorlig galt skjer vil serveren krasje. Serveren burde i stedet logge dette og returnere en status code 500 til brukeren
-* [ ] Dersom brukeren går til http://localhost:8080 får man 404. Serveren burde i stedet returnere innholdet av index.html
+* [x] Dersom brukeren går til http://localhost:8080 får man 404. Serveren burde i stedet returnere innholdet av index.html
 * [ ] Et favorittikon er et lite ikon som nettleseren viser i tab-vinduer for en webapplikasjon. Kan dere lage et favorittikon for deres server? Tips: ikonet er en binærfil og ikke en tekst og det går derfor ikke an å laste den inn i en StringBuilder
 * [ ] Klarer dere å lage en Coverage-rapport med GitHub Actions med Coveralls? (Advarsel: Foreleser har nylig opplevd feil med Coveralls så det er ikke sikkert dere får det til å virke)
 * [ ] Kan dere lage noen diagrammer som illustrerer hvordan programmet deres virker?
@@ -70,8 +70,8 @@
 * [x] Fikse jallaknappen AKA refresh
 * [ ] Bedre navngivning
 * [ ] Bedre feilhåndtering
-* [ ] Endre måten daoene lagerer fra input slik at det ikke lagres blank / null til databasen, men at det da heller sendes en 400 request error.(Eksempel kode under)
-* [ ] Fikse Jar URL encode/decode       
+* [ ] Endre måten daoene lagrer fra input slik at det ikke lagres blank / null til databasen, men at det da heller sendes en 400 request error.(Eksempel kode under)
+* [x] Fikse Jar URL encode/decode       
 
 
                     eksempel: if (person.getFirstName()= null || person.getFirstName().isBlank()){
