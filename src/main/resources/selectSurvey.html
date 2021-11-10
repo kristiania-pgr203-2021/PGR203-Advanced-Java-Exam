@@ -99,7 +99,7 @@
     }).then(function(text) {
         document.getElementById("question").innerHTML = text;
     });
-    fetch("/api/newAlternativesOptions").then(function (res) {
+    fetch("/api/alternativesOptions").then(function (res) {
         return res.text();
     }).then(function(text) {
         document.getElementById("alternative").innerHTML = text;
