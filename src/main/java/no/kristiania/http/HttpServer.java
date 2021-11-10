@@ -385,4 +385,8 @@ public class HttpServer {
     public void setAlternativeDao(AlternativeDao alternativeDao) {
         this.alternativeDao = alternativeDao;
     }
+
+    public void addController(String path, HttpController controller) {
+
+    }
 }
