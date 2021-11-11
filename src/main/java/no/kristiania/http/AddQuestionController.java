@@ -24,6 +24,8 @@ public class AddQuestionController implements HttpController {
         question.setSurveyId(GetSurveyController.getSurveyId());
         questionDao.save(question);
 
+        System.out.println("OK");
+
         return new HttpMessage("303 See Other", "/createSurvey.html", "it's done");
     }
 }

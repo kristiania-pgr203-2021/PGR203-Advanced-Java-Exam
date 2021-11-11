@@ -9,13 +9,12 @@ public class GetQuestionIdController implements HttpController {
     @Override
     public HttpMessage handle(HttpMessage request) {
 
-
         Map<String, String> queryMap = HttpMessage.parseRequestParameters(request.messageBody);
+
         Long questionId = Long.valueOf(queryMap.get("questionInput"));
         if (questionId != null){
             this.questionId = questionId;
         }
-
 
         System.out.println(questionId);
         return new HttpMessage("303 See Other", "/createSurvey.html" , "Its done");
