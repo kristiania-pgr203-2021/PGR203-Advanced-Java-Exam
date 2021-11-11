@@ -1,9 +1,11 @@
 package no.kristiania.http;
 
+import no.kristiania.jdbc.*;
 import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
+import java.sql.SQLException;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HttpServerTest {
@@ -31,19 +33,97 @@ public class HttpServerTest {
         HttpClient client = new HttpClient("localhost", server.getPort(), "/index.html");
         assertEquals(200, client.getStatusCode());
     }
-
-    /*
     @Test
-    void shouldCreateNewProduct() throws IOException {
+    void shouldListSurveysFromDatabase() throws SQLException, IOException {
+        server.addController("/api/getSurvey", new GetSurveyController(new SurveyDao(TestData.testDataSource())));
+        SurveyDao dao = new SurveyDao(TestData.testDataSource());
+        Survey survey = TestData.exampleSurvey();
+        dao.save(survey);
+
+        HttpClient client = new HttpClient("localhost", server.getPort(), "/api/getSurvey");
+        assertEquals(200, client.getStatusCode());
+       // assertEquals("Newly added survey: " + survey.getSurveyName(), client.getMessageBody());
+    }
+
+    @Test
+    void shouldCreateNewSurvey() throws IOException, SQLException {
+        server.addController("/api/addSurvey", new AddSurveyController(new SurveyDao(TestData.testDataSource())));
+        SurveyDao dao = new SurveyDao(TestData.testDataSource());
+
         HttpPostClient postClient = new HttpPostClient(
                 "localhost",
                 server.getPort(),
-                "/api/newProduct",
-                "category=1&productName=Kylling");
-        assertEquals(200, postClient.getStatusCode());
-        Products products = server.getProductsList().get(0);
-        assertEquals("Kylling", products.getProduct());
+                "/api/addSurvey",
+                "surveyInput=New+Survey");
+
+        assertEquals(303, postClient.getStatusCode());
+        String allSurveys = "";
+        for (Survey survey : dao.listAll()){
+            allSurveys = survey.getSurveyName();
+        }
+
+        String newSurveyName = "New Survey";
+        assertThat(allSurveys)
+                .containsAnyOf(newSurveyName);
     }
 
-      */
+    @Test
+    void shouldCreateNewQuestion() throws IOException, SQLException {
+        server.addController("/api/addQuestion", new AddQuestionController(new QuestionDao(TestData.testDataSource())));
+        SurveyDao sdao = new SurveyDao(TestData.testDataSource());
+        Survey survey = TestData.exampleSurvey();
+        sdao.save(survey);
+
+        QuestionDao qdao = new QuestionDao(TestData.testDataSource());
+        Question question = TestData.exampleQuestion();
+        question.setSurveyId(survey.getId());
+        qdao.save(question);
+
+        assertThat(qdao.retrieve(question.getId()))
+                .hasNoNullFieldsOrProperties()
+                .usingRecursiveComparison()
+                .isEqualTo(question);
+
+        server.addController("/api/addQuestion", new AddQuestionController(new QuestionDao(TestData.testDataSource())));
+        HttpPostClient postClient = new HttpPostClient(
+                "localhost",
+                server.getPort(),
+                "/api/addQuestion",
+                "questionInput=Add+Survey");
+
+        assertEquals(303, postClient.getStatusCode());
+
+    }
+    @Test
+    void shouldListQuestionsFromDatabase() throws SQLException, IOException {
+        SurveyDao sdao = new SurveyDao(TestData.testDataSource());
+        Survey survey = TestData.exampleSurvey();
+        sdao.save(survey);
+        QuestionDao qdao = new QuestionDao(TestData.testDataSource());
+        Question question = TestData.exampleQuestion();
+        question.setSurveyId(survey.getId());
+        qdao.save(question);
+        server.addController("/api/listQuestions", new ListQuestionsController(new QuestionDao(TestData.testDataSource())));
+
+        HttpClient client = new HttpClient("localhost", server.getPort(), "/api/listQuestions");
+        assertEquals(200, client.getStatusCode());
+        qdao.listQuestionsBySurveyId(survey.getId());
+
+        // assertEquals("Newly added survey: " + survey.getSurveyName(), client.getMessageBody());
+    }
+    @Test
+    void shouldCreateNewAlternative() throws IOException, SQLException {
+        server.addController("/api/newAlternative", new AddAlternativeController(new AlternativeDao(TestData.testDataSource())));
+        //TODO:
+    }
+    @Test
+    void shouldGetQuestionIdFromUser() throws SQLException, IOException {
+        server.addController("/api/listAlternativesByQuestion", new GetQuestionIdController());
+       //TODO:
+    }
+    @Test
+    void shouldListQuestionsFromQuestionId() throws SQLException, IOException {
+        server.addController("/api/listAlternatives", new ListAlternativesByQuestionId(new AlternativeDao(TestData.testDataSource())));
+        //TODO:
+    }
 }

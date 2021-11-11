@@ -36,6 +36,16 @@ public class SurveyDao {
         }
     }
 
+    public void update(Long id, String surveyName) throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("update surveys set survey_name = ? where id = ?")) {
+                statement.setString(1, surveyName);
+                statement.setLong(2, id);
+                statement.executeUpdate();
+            }
+        }
+    }
+
     public Survey retrieve(long id) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("select * from surveys where id = ?")) {

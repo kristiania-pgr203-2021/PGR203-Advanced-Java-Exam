@@ -59,11 +59,26 @@
             <version>RELEASE</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.28</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-commons</artifactId>
+            <version>1.8.1</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <slf4jVersion>1.6.1</slf4jVersion>
     </properties>
+
 
     <build>
         <plugins>
@@ -78,9 +93,9 @@
                 <version>3.2.0</version>
                 <configuration>
                     <archive>
-                        <manifestEntries>
-                            <Main-Class>no.kristiania.http.SurveyManager</Main-Class>
-                        </manifestEntries>
+                        <manifest>
+                            <mainClass>no.kristiania.http.SurveyManager</mainClass>
+                        </manifest>
                     </archive>
                 </configuration>
             </plugin>
@@ -97,7 +112,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 

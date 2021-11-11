@@ -8,37 +8,82 @@
 
 <body>
     <main>
-        <h1>Edit a existing survey</h1>
+       <div id="allSurveys_div">
+            <h1>Edit existing survey</h1>
+            <h4>All Surveys:</h4>
+            <div id="survey"></div>
+       </div>
 
-        <div id="survey_div">
+       <div id="survey_div">
+            <h3>Delete survey</h3>
             <form action="/api/selectSurvey" method="POST" accept-charset="utf-8">
-                <label>Which survey do you want to edit from? <select id="survey"></select></label>
-                <label><input type="text" name="surveyID"/></label>
-                <button>Select</button>
+                <p style="color:red;">Warning: deleting a survey will also delete all questions and alternatives who belong to the survey</p>
+                <label>Write survey ID: <input type="text" name="surveyID"/></label>
+                <button>Delete</button>
+            </form>
+        </div>
+
+        <div id="selected_survey_div">
+            <h3>Edit survey</h3>
+            <form action="/api/editSurvey" method="POST" accept-charset="utf-8">
+                <label>Write survey ID: <input type="text" name="surveyID"/></label>
+                <label>Set new survey name: <input type="text" name="surveyName"/></label>
+                <button>Update</button>
             </form>
         </div>
         <br>
-
-        <div id="selected_survey_div">
-            <div id="selected_survey">
-                <h3>Survey name:_______[EDIT]</h3>
-                <p>Question:______[EDIT]</p>
-                <p>Alternative: 1._______ [EDIT] Alternative: 2._______ [EDIT]</p><br>
-                <p>Question:______[EDIT]</p>
-                <p>Alternative: 1._______ [EDIT] Alternative: 2._______ [EDIT]</p><br>
-                <p>Question:______[EDIT]</p>
-                <p>Alternative: 1._______ [EDIT] Alternative: 2._______ [EDIT]</p><br>
-            </div>
-
-            <form action="/api/newQuestion" method="post" accept-charset="utf-8">
-                <h3>Question:</h3>
-                <label>Question text: <input type="text" name="question_text"/></label>
-                <button id="test">Add your question</button>
+        <div id="allQuestions_div">
+             <form action="/api/getQuestionById" method="post" accept-charset="UTF-8">
+                 <h3>Question list</h3>
+                <label>Set survey ID to se all belonging questions: <input type="text" name="surveyID"></label>
+                 <button>Select</button>
+                <h4>All Questions:</h4>
+                <div id="question"></div>
+             </form>
+        </div>
+        <div id="deleteSurvey_div">
+            <h3>Delete question</h3>
+            <form action="/api/deleteQuestion" method="POST" accept-charset="utf-8">
+                <p style="color:red;">Warning: deleting a question will also delete all alternatives who belong to the survey</p>
+                <label>Write question ID: <input type="text" name="questionID"/></label>
+                <button>Delete</button>
             </form>
         </div>
-
+        <div id="question_div">
+            <h3>Edit question</h3>
+            <form action="/api/editQuestion" method="post" accept-charset="utf-8">
+                <label>Write question ID: <input type="text" name="questionId"/></label>
+                <label>Set new question text: <input type="text" name="questionName"/></label>
+                <button>Update</button>
+            </form>
+        </div>
+        <br>
+        <div id="allAlternatives_div">
+            <form action="/api/getAlternativesById" method="post" accept-charset="UTF-8">
+                <h3>Alternative list</h3>
+                <label>Set question ID to se all belonging alternatives: <input type="text" name="questionId"></label>
+                <button>Select</button>
+                <h4>All Alternatives:</h4>
+                <div id="alternative"></div>
+            </form>
+        </div>
+        <div id="deleteAlternative_div">
+            <h3>Delete alternative</h3>
+            <form action="/api/deleteAlternative" method="POST" accept-charset="utf-8">
+                <label>Set alternative ID: <input type="text" name="alternativeId"/></label>
+                <button>Delete</button>
+            </form>
+        </div>
+        <div id="alternative_div">
+            <h3>Edit alternative</h3>
+            <form action="/api/editAlternative" method="post" accept-charset="utf-8">
+                <label>Set alternative ID: <input type="text" name="alternativeId"/></label>
+                <label>Set new alternative text: <input type="text" name="alternativeName"/></label>
+                <button>Update</button>
+            </form>
+        </div>
         <div>
-            <a href="index.html">Return to frontpage</a>
+            <button><a href="index.html">Return to frontpage</a></button>
         </div>
     </main>
 </body>
@@ -49,5 +94,16 @@
     }).then(function(text) {
         document.getElementById("survey").innerHTML = text;
     });
+    fetch("/api/newQuestionOptions").then(function (res) {
+        return res.text();
+    }).then(function(text) {
+        document.getElementById("question").innerHTML = text;
+    });
+    fetch("/api/alternativesOptions").then(function (res) {
+        return res.text();
+    }).then(function(text) {
+        document.getElementById("alternative").innerHTML = text;
+    });
+
 </script>
 </html>
