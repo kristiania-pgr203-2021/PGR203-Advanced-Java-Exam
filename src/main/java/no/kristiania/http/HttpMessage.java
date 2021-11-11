@@ -6,16 +6,42 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpMessage {
-    public static String startLine;
+    public static String statusCode;
     public final Map<String, String> headerFields = new HashMap<>();
+    public String location;
     public String messageBody;
 
     public HttpMessage(Socket socket) throws IOException {
-        startLine = HttpMessage.readLine(socket);
+        statusCode = HttpMessage.readLine(socket);
         readHeaders(socket);
         if (headerFields.containsKey("Content-Length")) {
             messageBody = HttpMessage.readBytes(socket, getContentLength());
         }
+    }
+
+    //response 200
+    public HttpMessage(String statusCode, String messageBody){
+        this.statusCode = statusCode;
+        this.messageBody = messageBody;
+    }
+
+    //response 303
+    public HttpMessage(String statusCode, String location, String messageBody){
+        this.statusCode = statusCode;
+        this.messageBody = messageBody;
+        this.location = location;
+    }
+
+
+    public static Map<String, String> parseRequestParameters(String query) {
+        Map<String, String> queryMap = new HashMap<>();
+        for (String queryParameter : query.split("&")) {
+            int equalsPos = queryParameter.indexOf('=');
+            String parameterName = queryParameter.substring(0, equalsPos);
+            String parameterValue = queryParameter.substring(equalsPos+1);
+            queryMap.put(parameterName, parameterValue);
+        }
+        return queryMap;
     }
 
     public int getContentLength() {
@@ -53,5 +79,27 @@ public class HttpMessage {
         int expectedNewline = socket.getInputStream().read();
         assert expectedNewline == '\n';
         return buffer.toString();
+    }
+
+    public void write(Socket socket) throws IOException {
+        if (location != null) {
+            String response = "HTTP/1.1 " + statusCode + "\r\n" +
+                    "Content-Length: " + messageBody.getBytes().length + "\r\n" +
+                    "Location: http://localhost:" + HttpServer.getPort() + location + "\r\n" +
+                    "Connection: close\r\n" +
+                    "Content-Type: text/html\r\n" +
+                    "\r\n" +
+                    messageBody;
+            socket.getOutputStream().write(response.getBytes());
+
+        } else {
+            String response = "HTTP/1.1 " + statusCode + "\r\n" +
+                    "Content-Length: " + messageBody.getBytes().length + "\r\n" +
+                    "Connection: close\r\n" +
+                    "Content-Type: text/html\r\n" +
+                    "\r\n" +
+                    messageBody;
+            socket.getOutputStream().write(response.getBytes());
+        }
     }
 }
