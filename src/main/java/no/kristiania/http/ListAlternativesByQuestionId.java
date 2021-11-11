@@ -19,9 +19,9 @@ public class ListAlternativesByQuestionId implements HttpController {
         String responseTxt = "";
 
 
-
         for (Alternative alternative : alternativeDao.listAlternativesByQuestionId(GetQuestionIdController.getQuestionId())) {
             responseTxt += "<li>" + utf8Value(alternative.getAlternative()) + "</li>";
+
         }
         return new HttpMessage("200 OK", responseTxt);
     }

@@ -4,15 +4,20 @@ import java.util.Map;
 
 public class GetQuestionIdController implements HttpController {
 
-    private static Long questionId;
+    private static Long questionId = Long.valueOf(1);
 
     @Override
     public HttpMessage handle(HttpMessage request) {
+
+
         Map<String, String> queryMap = HttpMessage.parseRequestParameters(request.messageBody);
-        this.questionId = Long.parseLong(queryMap.get("questionId"));
+        Long questionId = Long.valueOf(queryMap.get("questionInput"));
+        if (questionId != null){
+            this.questionId = questionId;
+        }
+
 
         System.out.println(questionId);
-
         return new HttpMessage("303 See Other", "/createSurvey.html" , "Its done");
     }
 
