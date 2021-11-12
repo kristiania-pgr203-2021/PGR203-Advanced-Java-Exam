@@ -7,7 +7,6 @@ import no.kristiania.jdbc.TestData;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -63,7 +62,7 @@ public class HttpServerTest {
     }
 
     @Test
-    void shouldPostAndGetNewQuestion() throws IOException, SQLException {
+    void shouldPostAndGetNewQuestion() throws IOException {
         server.addController("/api/addSurvey", new AddSurveyController(surveyDao));
         server.addController("/api/getSurvey", new GetSurveyController(surveyDao));
         server.addController("/api/addQuestion", new AddQuestionController(questionDao));
@@ -136,16 +135,14 @@ public class HttpServerTest {
 
         HttpClient client3 = new HttpClient("localhost", server.getPort(), "/api/listAlternatives");
         assertTrue(client3.getMessageBody().endsWith("<li>New Alternative Again</li>"));
-
     }
-
     @Test
-    void shouldGetQuestionIdFromUser() throws SQLException, IOException {
+    void shouldGetQuestionIdFromUser() throws IOException {
         server.addController("/api/listAlternativesByQuestion", new GetQuestionIdController());
        //TODO:
     }
     @Test
-    void shouldListQuestionsFromQuestionId() throws SQLException, IOException {
+    void shouldListQuestionsFromQuestionId() throws IOException {
         server.addController("/api/listAlternatives", new ListAlternativesByQuestionIdController(new AlternativeDao(TestData.testDataSource())));
         //TODO:
     }

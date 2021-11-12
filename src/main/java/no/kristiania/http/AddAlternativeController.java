@@ -2,7 +2,7 @@ package no.kristiania.http;
 
 import no.kristiania.jdbc.Alternative;
 import no.kristiania.jdbc.AlternativeDao;
-import java.io.IOException;
+
 import java.sql.SQLException;
 import java.util.Map;
 
@@ -17,7 +17,7 @@ public class AddAlternativeController implements HttpController {
     }
 
     @Override
-    public HttpMessage handle(HttpMessage request) throws SQLException, IOException {
+    public HttpMessage handle(HttpMessage request) throws SQLException {
         Map<String, String> queryMap = HttpMessage.parseRequestParameters(request.messageBody);
         this.alternative = new Alternative();
 

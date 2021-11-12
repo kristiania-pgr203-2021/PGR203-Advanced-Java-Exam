@@ -73,6 +73,7 @@
 * [ ] Bedre feilhåndtering
 * [ ] Endre måten daoene lagrer fra input slik at det ikke lagres blank / null til databasen, men at det da heller sendes en 400 request error.(Eksempel kode under)
 * [x] Fikse Jar URL encode/decode       
+* [ ] EditSurvey lagrer gjeldende survey ID for endringer. Uten å måtte spesifisere ID hver gang
 
 
                     eksempel: if (person.getFirstName()= null || person.getFirstName().isBlank()){
