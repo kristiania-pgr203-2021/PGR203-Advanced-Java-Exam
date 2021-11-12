@@ -30,11 +30,15 @@ public class SurveyManager {
         httpServer.addController("/api/addAlternative", new AddAlternativeController(alternativeDao)); //TODO: Add new alternative
         httpServer.addController("/api/getQuestionId", new GetQuestionIdController()); //TODO: Gets questionID
         httpServer.addController("/api/listAlternatives", new ListAlternativesByQuestionIdController(alternativeDao)); //TODO: List all alternatives with questionID
+        httpServer.addController("/api/listSurveys", new ListSurveysController(surveyDao)); //TODO: List all created surveys
+        httpServer.addController("/api/editSurvey", new EditSurveyController(surveyDao)); //TODO: Edit existing survey name
+        httpServer.addController("/api/getSurveyId", new GetSurveyIdController()); //TODO: Gets surveyID from input
         httpServer.setSurveyDao(new SurveyDao(dataSource));
         httpServer.setQuestionDao(new QuestionDao(dataSource));
         httpServer.setAlternativeDao(new AlternativeDao(dataSource));
         logger.info("Starting http://localhost:{}/index.html", httpServer.getPort());
         logger.info("Starting http://localhost:{}/createSurvey.html", httpServer.getPort());
+        logger.info("Starting http://localhost:{}/editSurvey.html", httpServer.getPort());
 
     }
     public static DataSource createDataSource() throws IOException {

@@ -77,19 +77,9 @@ public class HttpServer {
             HttpMessage response = controllers.get(fileTarget).handle(httpMessage);
             response.write(clientSocket);
             return;
+        }
 
-
-            //TODO: Viser alle survyene         !!Refactored!!
-        } if (fileTarget.equals("/api/listSurveys")) {
-            String responseText = "";
-
-            for (Survey survey : surveyDao.listAll()) {
-                responseText += "<p>" + "ID: " + survey.getId() + " " + "Name: " + survey.getSurveyName() + "</p>";
-            }
-            writeOk200Response(clientSocket, responseText, "text/html");
-
-            //TODO: Finner id til survey og endrer navnet på den    !!Refactored !!
-        } else if (fileTarget.equals("/api/editSurvey")) {
+            if (fileTarget.equals("/api/editSurvey")) {
             String location = "/editSurvey.html";
             Map<String, String> queryMap = HttpMessage.parseRequestParameters(httpMessage.messageBody);
             SurveyDao dao = new SurveyDao(SurveyManager.createDataSource());
@@ -128,6 +118,7 @@ public class HttpServer {
         } else if (fileTarget.equals("/api/listQuestionsInEdit")) {
 
             String Test = "";
+
             for (Question question : questionDao.listQuestionsBySurveyId(surveyId)) {
                 Test += "<p>" + "ID: " + question.getId() + " " + "Question text: " + utf8Value(question.getQuestionText()) + "</p>";
             }

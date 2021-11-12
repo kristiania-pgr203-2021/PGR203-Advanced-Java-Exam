@@ -106,6 +106,7 @@ public class HttpServerTest {
                 "surveyInput=New+Survey");
         assertEquals(303, postSurvey.getStatusCode());
 
+
         HttpClient client1 = new HttpClient("localhost", server.getPort(), "/api/getSurvey");
         assertEquals("Newly added survey: New Survey", client1.getMessageBody());
 
@@ -137,13 +138,108 @@ public class HttpServerTest {
         assertTrue(client3.getMessageBody().endsWith("<li>New Alternative Again</li>"));
     }
     @Test
-    void shouldGetQuestionIdFromUser() throws IOException {
-        server.addController("/api/listAlternativesByQuestion", new GetQuestionIdController());
-       //TODO:
+    void shouldListAllSurveys() throws IOException {
+        server.addController("/api/addSurvey", new AddSurveyController(surveyDao));
+        server.addController("/api/listSurveys", new ListSurveysController(new SurveyDao(TestData.testDataSource())));
+
+        HttpPostClient postClient = new HttpPostClient(
+                "localhost",
+                server.getPort(),
+                "/api/addSurvey",
+                "surveyInput=List+All+Surveys+Test");
+        assertEquals(303, postClient.getStatusCode());
+
+        HttpClient client = new HttpClient("localhost", server.getPort(), "/api/listSurveys");
+        System.out.println(client.getMessageBody());
+        assertTrue(client.getMessageBody().endsWith("List All Surveys Test</p>"));
+    }
+
+    @Test
+    void shouldEditSurvey() throws IOException {
+        server.addController("/api/addSurvey", new AddSurveyController(surveyDao));
+        server.addController("/api/editSurvey", new EditSurveyController(surveyDao));
+
+        HttpPostClient postClient1 = new HttpPostClient(
+                "localhost",
+                server.getPort(),
+                "/api/addSurvey",
+                "surveyInput=List+All+Surveys+Test");
+        assertEquals(303, postClient1.getStatusCode());
+
+        HttpPostClient postClient2 = new HttpPostClient(
+                "localhost",
+                server.getPort(),
+                "/api/editSurvey",
+                "surveyIdInput=1&surveyNameInput=Edited+Survey");
+        assertEquals(303, postClient2.getStatusCode());
+
+        HttpClient client = new HttpClient("localhost", server.getPort(), "/api/editSurvey");
+        //assertEquals("Edited Survey", client.getMessageBody());
+    }
+
+    @Test
+    void shouldDeleteSurvey() {
+        server.addController("/api/deleteSurvey", new DeleteSurveyController(new SurveyDao(TestData.testDataSource())));
+    }
+
+    @Test
+    void shouldListAllQuestions() throws IOException {
+        server.addController("/api/getSurveyId", new GetSurveyIdController());
+
+        HttpPostClient getSurveyIdPost = new HttpPostClient(
+                    "localhost",
+                    server.getPort(),
+                    "/api/getSurveyId",
+                    "surveyInput=1");
+        assertEquals(303, getSurveyIdPost.getStatusCode());
     }
     @Test
-    void shouldListQuestionsFromQuestionId() throws IOException {
-        server.addController("/api/listAlternatives", new ListAlternativesByQuestionIdController(new AlternativeDao(TestData.testDataSource())));
-        //TODO:
+    void shouldEditQuestion() throws IOException {
+        server.addController("/api/editQuestion", new EditQuestionController(new QuestionDao(TestData.testDataSource()))); //TODO: HER HOLDER MARTIN PÅ
+
+        HttpPostClient postSurvey = new HttpPostClient(
+                "localhost",
+                server.getPort(),
+                "/api/addSurvey",
+                "surveyInput=New+Survey");
+        assertEquals(303, postSurvey.getStatusCode());
+
+        HttpClient client1 = new HttpClient("localhost", server.getPort(), "/api/getSurvey");
+        assertEquals("Newly added survey: New Survey", client1.getMessageBody());
+
+        HttpPostClient postQuestion = new HttpPostClient(
+                "localhost",
+                server.getPort(),
+                "/api/addQuestion",
+                "questionInput=Old+Question");
+        assertEquals(303, postQuestion.getStatusCode());
+
+        HttpPostClient postEditQuestion = new HttpPostClient(
+                "localhost",
+                server.getPort(),
+                "/api/editQuestion",
+                "questionIdInput=1&questionNameInput=New+Question");
+        assertEquals(303, postEditQuestion.getStatusCode());
+
+    }
+
+    @Test
+    void shouldDeleteQuestion() {
+        server.addController("/api/DeleteQuestion", new DeleteQuestionController(new QuestionDao(TestData.testDataSource())));
+    }
+
+    @Test
+    void ShouldListAllAlternatives() {
+        server.addController("/api/listAlternativesInEdit", new ListAlternativesInEditController(new AlternativeDao(TestData.testDataSource())));
+    }
+
+    @Test
+    void ShouldEditAlternative() {
+        server.addController("/api/editAlternative", new EditAlternativeController(new AlternativeDao(TestData.testDataSource())));
+    }
+
+    @Test
+    void shouldDeleteAlternative() {
+        server.addController("/api/deleteAlternative", new DeleteAlternativeController(new AlternativeDao(TestData.testDataSource())));
     }
 }
