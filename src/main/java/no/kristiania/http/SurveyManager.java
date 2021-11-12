@@ -19,7 +19,7 @@ public class SurveyManager {
 
     public static void main(String[] args) throws IOException {
         DataSource dataSource = createDataSource();
-        HttpServer httpServer = new HttpServer(1964);
+        HttpServer httpServer = new HttpServer(1962);
         SurveyDao surveyDao = new SurveyDao(dataSource);
         QuestionDao questionDao = new QuestionDao(dataSource);
         AlternativeDao alternativeDao = new AlternativeDao(dataSource);
@@ -29,7 +29,7 @@ public class SurveyManager {
         httpServer.addController("/api/listQuestions", new ListQuestionsController(questionDao)); //TODO: List all questions with surveyID
         httpServer.addController("/api/addAlternative", new AddAlternativeController(alternativeDao)); //TODO: Add new alternative
         httpServer.addController("/api/getQuestionId", new GetQuestionIdController()); //TODO: Gets questionID
-        httpServer.addController("/api/listAlternatives", new ListAlternativesByQuestionId(alternativeDao)); //TODO: List all alternatives with questionID
+        httpServer.addController("/api/listAlternatives", new ListAlternativesByQuestionIdController(alternativeDao)); //TODO: List all alternatives with questionID
         httpServer.setSurveyDao(new SurveyDao(dataSource));
         httpServer.setQuestionDao(new QuestionDao(dataSource));
         httpServer.setAlternativeDao(new AlternativeDao(dataSource));

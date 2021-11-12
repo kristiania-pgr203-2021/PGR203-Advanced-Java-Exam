@@ -2,6 +2,7 @@ package no.kristiania.http;
 
 import no.kristiania.jdbc.Question;
 import no.kristiania.jdbc.QuestionDao;
+
 import java.sql.SQLException;
 import java.util.Map;
 
@@ -23,8 +24,6 @@ public class AddQuestionController implements HttpController {
         question.setQuestionText(decodedValue);
         question.setSurveyId(GetSurveyController.getSurveyId());
         questionDao.save(question);
-
-        System.out.println("OK");
 
         return new HttpMessage("303 See Other", "/createSurvey.html", "it's done");
     }

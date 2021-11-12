@@ -32,7 +32,6 @@ public class HttpMessage {
         this.location = location;
     }
 
-
     public static Map<String, String> parseRequestParameters(String query) {
         Map<String, String> queryMap = new HashMap<>();
         for (String queryParameter : query.split("&")) {

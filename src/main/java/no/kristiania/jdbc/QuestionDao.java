@@ -86,6 +86,21 @@ public class QuestionDao {
         }
     }
 
+    public ArrayList<Question> listAll() throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("select * from questions")) {
+                try (ResultSet rs = statement.executeQuery()) {
+                    ArrayList<Question> result = new ArrayList<>();
+
+                    while (rs.next()) {
+                        result.add(resultFromResultSet(rs));
+                    }
+                    return result;
+                }
+            }
+        }
+    }
+
     private Question resultFromResultSet(ResultSet rs) throws SQLException {
         Question question = new Question();
         question.setId(rs.getLong("id"));

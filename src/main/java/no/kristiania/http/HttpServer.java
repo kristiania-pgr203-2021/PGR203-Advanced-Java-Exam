@@ -262,8 +262,9 @@ public class HttpServer {
                 }
 
                 if (requestTarget.endsWith("/")) {
+                    contentType = "text/html; charset=utf-8";
                     String location = "/index.html";
-                    writeOk303Response(clientSocket, "index.html", contentType, location);
+                    writeOk303Response(clientSocket, responseText, contentType, location);
                 }
             }
 
