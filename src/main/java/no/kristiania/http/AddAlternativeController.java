@@ -2,7 +2,7 @@ package no.kristiania.http;
 
 import no.kristiania.jdbc.Alternative;
 import no.kristiania.jdbc.AlternativeDao;
-
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Map;
 
@@ -11,22 +11,21 @@ import static no.kristiania.http.UrlEncoding.decodeValue;
 public class AddAlternativeController implements HttpController {
     private final AlternativeDao alternativeDao;
     private Alternative alternative;
-    private long id = -1;
 
     public AddAlternativeController(AlternativeDao alternativeDao) {
         this.alternativeDao = alternativeDao;
     }
 
     @Override
-    public HttpMessage handle(HttpMessage request) throws SQLException {
-        System.out.println("hello");
-
+    public HttpMessage handle(HttpMessage request) throws SQLException, IOException {
         Map<String, String> queryMap = HttpMessage.parseRequestParameters(request.messageBody);
         this.alternative = new Alternative();
-        long id = Long.parseLong(((queryMap.get("questionInput"))));
-        String decodedValue = decodeValue(queryMap.get("alternativeInput"));
-        alternative.setAlternative(decodedValue);
-        alternative.setQuestionId(GetQuestionIdController.getQuestionId());
+
+        Long id = Long.valueOf(queryMap.get("questionId"));
+        String alternativeText = decodeValue(queryMap.get("alternativeInput"));
+
+        alternative.setAlternative(alternativeText);
+        alternative.setQuestionId(id);
         alternativeDao.save(alternative);
 
         return new HttpMessage("303 See Other", "/createSurvey.html","it's done");

@@ -98,6 +98,7 @@ public class HttpServerTest {
         server.addController("/api/listQuestions", new ListQuestionsController(questionDao));
         server.addController("/api/addAlternative", new AddAlternativeController(alternativeDao));
         server.addController("/api/listAlternatives", new ListAlternativesByQuestionIdController(alternativeDao));
+        server.addController("/api/getQuestionId", new GetQuestionIdController());
 
         HttpPostClient postSurvey = new HttpPostClient(
                 "localhost",
@@ -123,9 +124,18 @@ public class HttpServerTest {
                 "localhost",
                 server.getPort(),
                 "/api/addAlternative",
-                "questionId=1alternativeInput=New+Question+Again");
+                "questionId=1&alternativeInput=New+Alternative+Again");
         assertEquals(303, postAlternative.getStatusCode());
 
+        HttpPostClient postQuestionId = new HttpPostClient(
+                "localhost",
+                server.getPort(),
+                "/api/getQuestionId",
+                "questionInput=1");
+        assertEquals(303, postQuestionId.getStatusCode());
+
+        HttpClient client3 = new HttpClient("localhost", server.getPort(), "/api/listAlternatives");
+        assertTrue(client3.getMessageBody().endsWith("<li>New Alternative Again</li>"));
 
     }
 

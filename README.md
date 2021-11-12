@@ -46,7 +46,7 @@
 * [x] Programmet kan vise spørsmål (påkrevd for D)
 * [x] Programmet kan legge til alternativ for spørsmål (påkrevd for D)
 * [ ] Programmet kan registrere svar på spørsmål (påkrevd for C)
-* [ ] Programmet kan endre tittel og tekst på et spørsmål (påkrevd for B)
+* [x] Programmet kan endre tittel og tekst på et spørsmål (påkrevd for B)
 
 ### Ekstraspørsmål (dere må løse mange/noen av disse for å oppnå A/B)
 
