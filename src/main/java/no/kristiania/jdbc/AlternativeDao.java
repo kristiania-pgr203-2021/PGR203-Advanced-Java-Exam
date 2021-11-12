@@ -29,6 +29,23 @@ public class AlternativeDao {
         }
     }
 
+    public void deleteByQuestionId(int id) throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("delete from alternatives where question_id = ?")) {
+                statement.setLong(1, id);
+                statement.executeUpdate();
+            }
+        }
+    }
+    public void delete(int id) throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("delete from alternatives where id = ?")) {
+                statement.setLong(1, id);
+                statement.executeUpdate();
+            }
+        }
+    }
+
     public Alternative retrieve(long id) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("select * from alternatives where id = ?")) {
@@ -38,6 +55,16 @@ public class AlternativeDao {
                     rs.next();
                     return resultFromResultSet(rs);
                 }
+            }
+        }
+    }
+
+    public void update(Long id, String alternativeName) throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("update alternatives set alternative = ? where id = ?")) {
+                statement.setString(1, alternativeName);
+                statement.setLong(2, id);
+                statement.executeUpdate();
             }
         }
     }

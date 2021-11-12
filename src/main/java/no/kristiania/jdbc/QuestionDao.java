@@ -28,6 +28,33 @@ public class QuestionDao {
         }
     }
 
+    public void deleteBySurveyId(int id) throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("delete from questions where survey_id = ?")) {
+                statement.setLong(1, id);
+                statement.executeUpdate();
+            }
+        }
+    }
+    public void delete(int id) throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("delete from questions where id = ?")) {
+                statement.setLong(1, id);
+                statement.executeUpdate();
+            }
+        }
+    }
+
+    public void update(Long id, String questionName) throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("update questions set question = ? where id = ?")) {
+                statement.setString(1, questionName);
+                statement.setLong(2, id);
+                statement.executeUpdate();
+            }
+        }
+    }
+
     public Question retrieve(Long id) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("select * from questions where id = ?")) {
@@ -54,6 +81,21 @@ public class QuestionDao {
                         question.add(resultFromResultSet(rs));
                     }
                     return question;
+                }
+            }
+        }
+    }
+
+    public ArrayList<Question> listAll() throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("select * from questions")) {
+                try (ResultSet rs = statement.executeQuery()) {
+                    ArrayList<Question> result = new ArrayList<>();
+
+                    while (rs.next()) {
+                        result.add(resultFromResultSet(rs));
+                    }
+                    return result;
                 }
             }
         }
