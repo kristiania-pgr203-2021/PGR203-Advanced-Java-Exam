@@ -37,7 +37,7 @@ public class HttpServerTest {
     }
 
     @Test
-    void shouldRespondWithRequestTarget200() throws IOException{
+    void shouldRespondWithRequestTarget200() throws IOException {
         HttpClient client = new HttpClient("localhost", server.getPort(), "/index.html");
         assertEquals(200, client.getStatusCode());
     }
@@ -92,8 +92,10 @@ public class HttpServerTest {
         assertTrue(client2.getMessageBody().endsWith("New Question</p>"));
     }
 
-    /** This test can either pass by running all test suits at the same time, or it can only pass when
-     * runs by itself. Thats because of the data from in-memory database **/
+    /**
+     * This test can either pass by running all test suits at the same time, or it can only pass when
+     * runs by itself. Thats because of the data from in-memory database
+     **/
     @Test
     void shouldPostAndGetNewAlternative() throws IOException {
         server.addController("/api/addSurvey", new AddSurveyController(surveyDao));
@@ -183,7 +185,7 @@ public class HttpServerTest {
     }
 
     @Test
-    void shouldDeleteSurvey() throws IOException{
+    void shouldDeleteSurvey() throws IOException {
         server.addController("/api/addSurvey", new AddSurveyController(surveyDao));
         server.addController("/api/deleteSurvey", new DeleteSurveyController(surveyDao, questionDao, alternativeDao));
         server.addController("/api/listSurveys", new ListSurveysController(surveyDao));
@@ -298,10 +300,12 @@ public class HttpServerTest {
         assertThat(client2.getMessageBody()).doesNotContain("Question Should Be Deleted");
     }
 
-    /** This test can either pass by running all test suits at the same time, or it can only pass when
-     * runs by itself. Thats because of the data from in-memory database **/
+    /**
+     * This test can either pass by running all test suits at the same time, or it can only pass when
+     * runs by itself. Thats because of the data from in-memory database
+     **/
     @Test
-    void ShouldListAllAlternatives() throws IOException{
+    void ShouldListAllAlternatives() throws IOException {
         server.addController("/api/addSurvey", new AddSurveyController(surveyDao));
         server.addController("/api/getSurvey", new GetSurveyController(surveyDao));
         server.addController("/api/addQuestion", new AddQuestionController(questionDao));
@@ -342,8 +346,11 @@ public class HttpServerTest {
     }
 
     //TODO: Husk å skrive dette inn på readme
-    /** This test can either pass by running all test suits at the same time, or it can only pass when
-     * runs by itself. Thats because of the data from in-memory database **/
+
+    /**
+     * This test can either pass by running all test suits at the same time, or it can only pass when
+     * runs by itself. Thats because of the data from in-memory database
+     **/
     @Test
     void ShouldEditAlternative() throws IOException {
         server.addController("/api/addSurvey", new AddSurveyController(surveyDao));
@@ -447,3 +454,4 @@ public class HttpServerTest {
                 "alternativeInput=1");
         assertEquals(303, postDeleteAlternative.getStatusCode());
     }
+}

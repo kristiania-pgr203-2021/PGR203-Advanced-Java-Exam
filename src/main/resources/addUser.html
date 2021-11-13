@@ -7,6 +7,11 @@
 </head>
 <body>
     <main>
+
+        <div class="white_div">
+            <div id="selectedSurvey"></div>
+        </div><br>
+
         <div id="userForm_div">
             <h3>Before we begin...</h3>
             <h3>Please enter your personal information: </h3>
@@ -14,7 +19,7 @@
             <form method="post" action="/api/userForm" accept-charset="UTF-8">
                 <p><label>Firstname: <input type="text" name="firstName" placeholder="Type your first name here"/></label></p>
                 <p><label>Lastname: <input type="text" name="lastName" placeholder="Type your last name here"/></label></p>
-                <p><label>Email:   <input type="text" name="email" placeholder="Type your email here"/></label></p>
+                <p><label>Email:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <input type="text" name="email" placeholder="Type your email here"/></label></p>
                 <button><a href="answerSurvey.html">Submit</a></button>
             </form>
             <button><a href="index.html">Return to front page</a></button>
@@ -22,3 +27,12 @@
     </main>
 </body>
 </html>
+
+<script>
+    fetch("/api/selectedSurvey")
+        .then(function(response) {
+            return response.text();
+        }).then(function(text) {
+        document.getElementById("selectedSurvey").innerHTML = text;
+    });
+</script>
