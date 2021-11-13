@@ -2,12 +2,12 @@ package no.kristiania.http;
 
 import no.kristiania.jdbc.*;
 
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+
 import java.sql.SQLException;
 import java.util.HashMap;
 
@@ -59,6 +59,7 @@ public class HttpServer {
         int questionPos = requestTarget.indexOf('?');
         String fileTarget;
         String query = null;
+      
         if (questionPos != -1) {
             fileTarget = requestTarget.substring(0, questionPos);
             query = requestTarget.substring(questionPos + 1);
