@@ -10,7 +10,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.Map;
 
 public class HttpServer {
     private static ServerSocket serverSocket;
@@ -21,7 +20,6 @@ public class HttpServer {
     private Question question;
     private Alternative alternative;
 
-    private int questionIdForAlternative;
     private HashMap<String, HttpController> controllers = new HashMap<>();
 
     public Survey getSurvey() {
@@ -74,58 +72,38 @@ public class HttpServer {
             return;
         }
 
+        InputStream fileResource = getClass().getResourceAsStream(fileTarget);
 
-        if (fileTarget.equals("/api/getSurveyId")){
-            String location = "/editSurvey.html";
-            Map<String, String> queryMap = HttpMessage.parseRequestParameters(httpMessage.messageBody);
-            //this.surveyId = Integer.parseInt(queryMap.get("surveyInput"));
-            writeOk303Response(clientSocket, "survey id set", "text/html", location);
+        if (fileResource != null) {
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            fileResource.transferTo(buffer);
+            String responseText = buffer.toString();
 
-
-
-        } else if (fileTarget.equals("/api/listSurveysForm")) {
-            String responseText = "";
-            int value = 1;
-            for (Survey survey : surveyDao.listAll()) {
-                responseText += "<option value=" + (value++) + ">" + "ID: " + survey.getId() + " " + "Name: " + UrlEncoding.decodeValue(survey.getSurveyName()) + "</option>";
-
-                writeOk200Response(clientSocket, responseText,"text/html");
+            String contentType = "text/plain";
+            if (requestTarget.endsWith(".html")) {
+                contentType = "text/html; charset=utf-8";
+                writeOk200Response(clientSocket, responseText, contentType);
             }
 
-        } else {
-            InputStream fileResource = getClass().getResourceAsStream(fileTarget);
-
-            if (fileResource != null) {
-                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-                fileResource.transferTo(buffer);
-                String responseText = buffer.toString();
-
-                String contentType = "text/plain";
-                if (requestTarget.endsWith(".html")) {
-                    contentType = "text/html; charset=utf-8";
-                    writeOk200Response(clientSocket, responseText, contentType);
-                }
-
-                if (requestTarget.endsWith(".css")) {
-                    contentType = "text/css; charset=utf-8";
-                    writeOk200Response(clientSocket, responseText, contentType);
-                }
-
-                if (requestTarget.endsWith("/")) {
-                    contentType = "text/html; charset=utf-8";
-                    String location = "/index.html";
-                    writeOk303Response(clientSocket, responseText, contentType, location);
-                }
+            if (requestTarget.endsWith(".css")) {
+                contentType = "text/css; charset=utf-8";
+                writeOk200Response(clientSocket, responseText, contentType);
             }
 
-            String responseText = "File not found: " + requestTarget;
-            String response = "HTTP/1.1 404 Not found\r\n" +
-                    "Content-Length: " + responseText.length() + "\r\n" +
-                    "Connection: close\r\n" +
-                    "\r\n" +
-                    responseText;
-            clientSocket.getOutputStream().write(response.getBytes());
+            if (requestTarget.endsWith("/")) {
+                contentType = "text/html; charset=utf-8";
+                String location = "/index.html";
+                writeOk303Response(clientSocket, responseText, contentType, location);
+            }
         }
+
+        String responseText = "File not found: " + requestTarget;
+        String response = "HTTP/1.1 404 Not found\r\n" +
+                "Content-Length: " + responseText.length() + "\r\n" +
+                "Connection: close\r\n" +
+                "\r\n" +
+                responseText;
+        clientSocket.getOutputStream().write(response.getBytes());
     }
 
     private void writeOk200Response(Socket clientSocket, String responseText, String contentType) throws IOException {
