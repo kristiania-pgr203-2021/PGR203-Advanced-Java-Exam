@@ -71,6 +71,16 @@ public class HttpServer {
             response.write(clientSocket);
             return;
         }
+        if (fileTarget.equals("/api/listSurveysForm")){
+            String responseTxt = "";
+
+            int value = 1;
+            for (Survey survey: surveyDao.listAll()){
+                responseTxt += "<option value=" + (value++) + ">" + survey.getSurveyName() + "</option>";
+
+                writeOk200Response(clientSocket, responseTxt, "text/html");
+            }
+        }
 
         InputStream fileResource = getClass().getResourceAsStream(fileTarget);
 
