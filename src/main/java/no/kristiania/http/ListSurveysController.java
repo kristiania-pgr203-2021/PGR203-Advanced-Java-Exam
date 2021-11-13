@@ -20,6 +20,7 @@ public class ListSurveysController implements HttpController {
 
         for (Survey survey : surveyDao.listAll()) {
             responseText += "<p>" + "ID: " + survey.getId() + " " + "Name: " + UrlEncoding.decodeValue(survey.getSurveyName()) + "</p>";
+
         }
         return new HttpMessage("200 OK", responseText);
     }

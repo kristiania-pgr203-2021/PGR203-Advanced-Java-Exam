@@ -2,6 +2,7 @@ package no.kristiania.http;
 
 import no.kristiania.jdbc.*;
 
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,6 +20,7 @@ public class HttpServer {
     private Survey survey;
     private Question question;
     private Alternative alternative;
+
     private int questionIdForAlternative;
     private HashMap<String, HttpController> controllers = new HashMap<>();
 
@@ -89,6 +91,31 @@ public class HttpServer {
             writeOk303Response(clientSocket, "survey id set", "text/html", location);
 
             //TODO: Sletter question og tilhørende alternatives     !!Refactored!!
+        } else if (fileTarget.equals("/api/deleteAlternative")) {
+            String location = "/editSurvey.html";
+            AlternativeDao aDao = new AlternativeDao(SurveyManager.createDataSource());
+            Map<String, String> queryMap = HttpMessage.parseRequestParameters(httpMessage.messageBody);
+            String idInput = queryMap.get("alternativeInput");
+
+            aDao.delete(Integer.parseInt(idInput));
+
+            writeOk303Response(clientSocket, "deleted", "text/html", location);
+
+            //TODO: Sletter question og tilhørende alternatives     !!Refactored!!
+        } else if (fileTarget.equals("/api/deleteQuestion")) {
+                String location = "/editSurvey.html";
+                QuestionDao qDao = new QuestionDao(SurveyManager.createDataSource());
+                Map<String, String> queryMap = HttpMessage.parseRequestParameters(httpMessage.messageBody);
+                String idInput = queryMap.get("questionInput");
+
+                for (Alternative alternative: alternativeDao.listAlternativesByQuestionId(Long.parseLong(idInput))){
+                    alternativeDao.deleteByQuestionId(Math.toIntExact(alternative.getQuestionId()));
+                }
+                qDao.delete(Integer.parseInt(idInput));
+
+                writeOk303Response(clientSocket, "deleted", "text/html", location);
+
+            //TODO: Sletter alternative                               !!Refactored!!!
         } else if (fileTarget.equals("/api/deleteAlternative")) {
             String location = "/editSurvey.html";
             AlternativeDao aDao = new AlternativeDao(SurveyManager.createDataSource());

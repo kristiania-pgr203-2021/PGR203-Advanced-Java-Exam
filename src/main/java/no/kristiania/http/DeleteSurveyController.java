@@ -28,12 +28,11 @@ public class DeleteSurveyController implements HttpController {
                 alternativeDao.deleteByQuestionId(Math.toIntExact(alternative.getQuestionId()));
             }
         }
+      
         for (Question dq : questionDao.listQuestionsBySurveyId(Long.parseLong(idInput))) {
             questionDao.deleteBySurveyId(Math.toIntExact(dq.getSurveyId()));
         }
         surveyDao.delete(Integer.parseInt(queryMap.get("surveyInput")));
-
         return new HttpMessage("303 See Other", "/editSurvey.html", "Delete survey");
-
     }
 }

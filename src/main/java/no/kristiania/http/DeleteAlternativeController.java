@@ -4,6 +4,7 @@ import no.kristiania.jdbc.AlternativeDao;
 
 import java.io.IOException;
 import java.sql.SQLException;
+
 import java.util.Map;
 
 public class DeleteAlternativeController implements HttpController {
@@ -21,6 +22,5 @@ public class DeleteAlternativeController implements HttpController {
         alternativeDao.delete(Integer.parseInt(idInput));
 
         return new HttpMessage("303 See Other", "/editSurvey.html", "Its done");
-
     }
 }

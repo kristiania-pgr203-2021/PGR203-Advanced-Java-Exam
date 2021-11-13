@@ -4,6 +4,7 @@ import no.kristiania.jdbc.AlternativeDao;
 
 import java.io.IOException;
 import java.sql.SQLException;
+
 import java.util.Map;
 
 import static no.kristiania.http.UrlEncoding.decodeValue;
@@ -20,11 +21,9 @@ public class EditAlternativeController implements HttpController {
     public HttpMessage handle(HttpMessage request) throws SQLException, IOException {
         Map<String, String> queryMap = HttpMessage.parseRequestParameters(request.messageBody);
         AlternativeDao dao = new AlternativeDao(SurveyManager.createDataSource());
-
         Long id = Long.valueOf(queryMap.get("alternativeIdInput"));
         String name = queryMap.get("alternativeNameInput");
         dao.update(id, decodeValue(name));
-
         return new HttpMessage("303 See Other", "/editSurvey.html", "Edited alternative!");
     }
 }
