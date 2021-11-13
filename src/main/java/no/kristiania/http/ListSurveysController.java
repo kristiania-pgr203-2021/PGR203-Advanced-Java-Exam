@@ -19,7 +19,8 @@ public class ListSurveysController implements HttpController {
         String responseText = "";
 
         for (Survey survey : surveyDao.listAll()) {
-            responseText += "<p>" + "ID: " + survey.getId() + " " + "Name: " + survey.getSurveyName() + "</p>";
+            responseText += "<p>" + "ID: " + survey.getId() + " " + "Name: " + UrlEncoding.decodeValue(survey.getSurveyName()) + "</p>";
+
         }
         return new HttpMessage("200 OK", responseText);
     }

@@ -5,12 +5,22 @@ import no.kristiania.jdbc.AlternativeDao;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import java.util.Map;
+
 public class DeleteAlternativeController implements HttpController {
+    private final AlternativeDao alternativeDao;
+
     public DeleteAlternativeController(AlternativeDao alternativeDao) {
+        this.alternativeDao = alternativeDao;
     }
 
     @Override
     public HttpMessage handle(HttpMessage request) throws SQLException, IOException {
-        return null;
+        Map<String, String> queryMap = HttpMessage.parseRequestParameters(request.messageBody);
+        String idInput = queryMap.get("alternativeInput");
+
+        alternativeDao.delete(Integer.parseInt(idInput));
+
+        return new HttpMessage("303 See Other", "/editSurvey.html", "Its done");
     }
 }
