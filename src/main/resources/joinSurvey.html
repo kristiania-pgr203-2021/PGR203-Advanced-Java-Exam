@@ -8,25 +8,35 @@
 
 <body>
     <main>
-        <h1>Choose a survey you want to join :)</h1>
+       <div id="userForm_div">
+            <h3>Before we begin...</h3>
+            <h3>Please enter your personal information: </h3>
+            <form method="post" method="post" accept-charset="utf-8">
+                <p><label>Firstname: <input type="text" name="firstName" placeholder="Type your first name here"/></label></p>
+                <p><label>Lastname: <input type="text" name="lastName" placeholder="Type your last name here"/></label></p>
+                <p><label>Email:   <input type="text" name="email" placeholder="Type your email here"/></label></p>
+            </form>
+       </div>
 
-        <form method="GET" action="/api/tasks">
-            <label>Question: <select id="questions" name="questions" /></label>
-            <label>Option: <input type="text" name="option "/></label>
-            <button>Add</button>
-        </form>
+        <h1>Choose a survey you want to join :)</h1>
         <div>
-            <a href="index.html">Return to front page</a>
+            <form method="GET" action="/api/tasks">
+                <label>Surveys: <select id="listSurveys" name="surveyName"/></label>
+                <button>Join</button>
+            </form>
+        </div>
+        <div>
+            <button><a href="index.html">Return to front page</a></button>
         </div>
     </main>
 </body>
 
 <script>
-    fetch("/api/questionOptions")
+    fetch("/api/listSurveys")
     .then(function(response) {
         return response.text();
     }).then(function(text) {
-        document.getElementById("questions").innerHTML = text;
+        document.getElementById("listSurveys").innerHTML = text;
     });
 </script>
 </html>

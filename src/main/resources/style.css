@@ -13,7 +13,7 @@ main {
 #survey_div, #question_div, #editQuestion_div, #listQuestions_div, #alternative_div,
 #editSurvey_div, #listSurveys_div, #allQuestions_div, #deleteSurvey_div,
 #allAlternatives_div, #deleteAlternative_div, #deleteQuestion_div, #listQuestionsInEdit_div,
-#deleteQuestion_div, #listAlternativesInEdit_div, #editAlternative_div {
+#deleteQuestion_div, #listAlternativesInEdit_div, #editAlternative_div, #userForm_div {
     background-color: white;
     padding: 1em 1em;
     border-radius: 0.5em;

@@ -50,6 +50,8 @@ public class SurveyManager {
         logger.info("Starting http://localhost:{}/index.html", httpServer.getPort());
         logger.info("Starting http://localhost:{}/createSurvey.html", httpServer.getPort());
         logger.info("Starting http://localhost:{}/editSurvey.html", httpServer.getPort());
+        logger.info("Starting http://localhost:{}/joinSurvey.html", httpServer.getPort());
+        logger.info("Starting http://localhost:{}/answerSurvey.html", httpServer.getPort());
     }
 
     public static DataSource createDataSource() throws IOException {
