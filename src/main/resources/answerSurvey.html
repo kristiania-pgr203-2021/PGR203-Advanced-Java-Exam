@@ -11,9 +11,9 @@
 
     <div class="white_div">
         <h1>*FAKE SURVEY NAME*</h1>
-        <div id="joinedSurvey"></div>
+        <div id="selectedSurvey"></div>
         <p>*FAKE USER NAME*</p>
-        <div id="addedUSer"></div>
+        <div id="listUserAndSurvey"></div>
     </div>
 
     <div class="white_div">
@@ -40,18 +40,18 @@
 
     /************* Det serveren skriver/ sender ut til bruker *************/
 
-    fetch("/api/joinSurvey")
+    fetch("/api/selectedSurvey")
         .then(function(response) {
             return response.text();
         }).then(function(text) {
-        document.getElementById("joinedSurvey").innerHTML = text;
+        document.getElementById("selectedSurvey").innerHTML = text;
     });
 
-    fetch("/api/addUser")
+    fetch("/api/listUserAndSurvey")
         .then(function(response) {
             return response.text();
         }).then(function(text) {
-        document.getElementById("addedUser").innerHTML = text;
+        document.getElementById("listUserAndSurvey").innerHTML = text;
     });
 
 </script>

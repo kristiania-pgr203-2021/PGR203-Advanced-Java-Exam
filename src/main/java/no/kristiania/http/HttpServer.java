@@ -12,6 +12,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static no.kristiania.http.UrlEncoding.decodeValue;
+
 public class HttpServer {
     private static ServerSocket serverSocket;
     private SurveyDao surveyDao;
@@ -81,7 +83,7 @@ public class HttpServer {
             for (Survey survey : surveyDao.listAll()) {
                 int value = Math.toIntExact(survey.getId());
                 System.out.println("SurveyID: " + value);
-                messageBody += "<option value=" + (value) + ">" + "ID :" + survey.getId() + " " + survey.getSurveyName() + "</option>";
+                messageBody += "<option value=" + (value) + ">" + "ID: " + survey.getId() + " " + survey.getSurveyName() + "</option>";
             }
 
             System.out.println("This is messagebody (HTML): " + messageBody);
@@ -107,6 +109,16 @@ public class HttpServer {
             String messageBody = "";
             messageBody += "<h1>" + mapSurvey.get(this.surveyId) + "</h1>";
             writeOk200Response(clientSocket, messageBody, "text/html");
+
+        } else if (requestTarget.equals("/api/userForm")) {
+            String location = "/answerSurvey.html";
+            Map<String, String> queryMap = HttpMessage.parseRequestParameters(httpMessage.messageBody);
+            String firstName = decodeValue(queryMap.get("firstName"));
+            String lastName = decodeValue(queryMap.get("lastName"));
+            String email = decodeValue(queryMap.get("email"));
+            System.out.println("First name: " + firstName + " last name: " + lastName + " email: " + email);
+
+            writeOk303Response(clientSocket, "Personal information submitted!", "text/html", location);
         }
 
         InputStream fileResource = getClass().getResourceAsStream(fileTarget);
