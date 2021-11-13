@@ -8,19 +8,22 @@
 
 <body>
 <main>
-    <h1>*SURVEY NAME HERE*</h1>
 
-    <form id="form">
-        <label><input type="radio" name="alternative">Alternative 1</label>
-        <label><input type="radio" name="alternative">Alternative 2</label>
-        <label><input type="radio" name="alternative">Alternative 3</label>
-    </form>
+    <div class="white_div">
+        <h1>*FAKE SURVEY NAME*</h1>
+        <div id="joinedSurvey"></div>
+        <p>*FAKE USER NAME*</p>
+        <div id="addedUSer"></div>
+    </div>
 
-    <form id="form2">
-        <label><input type="range" name="alternative">Alternative 1</label>
-        <label><input type="range" name="alternative">Alternative 2</label>
-        <label><input type="range" name="alternative">Alternative 3</label>
-    </form>
+    <div class="white_div">
+
+        <form id="">
+            <label><input type="radio" name="alternative">Alternative 1</label>
+            <label><input type="radio" name="alternative">Alternative 2</label>
+            <label><input type="radio" name="alternative">Alternative 3</label>
+        </form>
+    </div>
 
     <form method="POST" action="/api/tasks">
         <label>Question: <select id="questions" name="questions"/></label>
@@ -34,11 +37,22 @@
 </body>
 
 <script>
-    fetch("/api/questionOptions")
+
+    /************* Det serveren skriver/ sender ut til bruker *************/
+
+    fetch("/api/joinSurvey")
         .then(function(response) {
             return response.text();
         }).then(function(text) {
-        document.getElementById("questions").innerHTML = text;
+        document.getElementById("joinedSurvey").innerHTML = text;
     });
+
+    fetch("/api/addUser")
+        .then(function(response) {
+            return response.text();
+        }).then(function(text) {
+        document.getElementById("addedUser").innerHTML = text;
+    });
+
 </script>
 </html>

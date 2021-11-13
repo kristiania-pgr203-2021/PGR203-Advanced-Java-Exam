@@ -10,6 +10,7 @@ import java.net.Socket;
 
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Map;
 
 public class HttpServer {
     private static ServerSocket serverSocket;
@@ -74,13 +75,28 @@ public class HttpServer {
         }
       
         if (fileTarget.equals("/api/listSurveysForm")){
-            String responseTxt = "";
+            String messageBody = "";
+            int tempId = 0;
             int value = 1;
-            for (Survey survey: surveyDao.listAll()){
-                responseTxt += "<option value=" + (value++) + ">" + survey.getSurveyName() + "</option>";
-                writeOk200Response(clientSocket, responseTxt, "text/html");
+
+            for (Survey survey : surveyDao.listAll()) {
+                messageBody += "<option value=" + (value++) + ">" + "ID :" + survey.getId() + " " + survey.getSurveyName() + "</option>";
+                tempId = Math.toIntExact(survey.getId());
             }
+
+                System.out.println("Dette er surveyId fra listSurveysForm: " + tempId);
+                writeOk200Response(clientSocket, messageBody, "text/html");
+            }
+        else if(fileTarget.equals("/api/joinSurvey")){
+            String location = "/joinSurvey.html";
+            Map<String, String> queryMap = HttpMessage.parseRequestParameters(httpMessage.messageBody);
+            String surveyId = queryMap.get("surveyName");
+            System.out.println("Dette er nr. valgt Survey: " + surveyId);
+
+
+            writeOk303Response(clientSocket, surveyId, "text/html", location);
         }
+
 
         InputStream fileResource = getClass().getResourceAsStream(fileTarget);
 
