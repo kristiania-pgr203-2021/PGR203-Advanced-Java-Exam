@@ -146,9 +146,12 @@ public class HttpServer {
             int surveyId = 0;
             for (Alternative alternative : alternativeDao.listAll()){
                 alternativeIds = Math.toIntExact(alternative.getQuestionId());
-                alternativeText = alternative;
+                alternativeText = alternative
                 System.out.println("Alternativ ID: " + alternativeIds);
                 System.out.println("Alternativ tekst: " + alternativeText + "\r");
+            }
+            for (Question question: questionDao.listAll()){
+                question.getId();
             }
 
             String messageBody = "";
