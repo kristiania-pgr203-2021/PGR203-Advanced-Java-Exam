@@ -10,28 +10,28 @@
 <main>
 
     <div class="white_div">
-        <h1>*FAKE SURVEY NAME*</h1>
-        <div id="selectedSurvey"></div>
-        <p>*FAKE USER NAME*</p>
+        <p>Her kommer User</p>
         <div id="listUserAndSurvey"></div>
+
+        <div id="selectedSurvey"></div>
     </div>
 
     <div class="white_div">
+        <div id="listQuestions"></div>
+    </div>
 
-        <form id="">
-            <label><input type="radio" name="alternative">Alternative 1</label>
-            <label><input type="radio" name="alternative">Alternative 2</label>
-            <label><input type="radio" name="alternative">Alternative 3</label>
+    <div class="white_div">
+        <form action="">
+            <h1>Her kommer spørsmål</h1>
+            <p><label><input type="radio" name="alternative">Alternative 1</label></p>
+            <p><label><input type="radio" name="alternative">Alternative 2</label></p>
+            <p></p><label><input type="radio" name="alternative">Alternative 3</label></p>
+            <button>Submit</button>
         </form>
     </div>
 
-    <form method="POST" action="/api/tasks">
-        <label>Question: <select id="questions" name="questions"/></label>
-        <label>Your answer: <input type="text" name="option "/></label>
-        <button>Add</button>
-    </form>
     <div>
-        <a href="index.html">Return to front page</a>
+        <button><a href="index.html">Return to front page</a></button>
     </div>
 </main>
 </body>
@@ -52,6 +52,12 @@
             return response.text();
         }).then(function(text) {
         document.getElementById("listUserAndSurvey").innerHTML = text;
+    });
+    fetch("/api/listQuestionsInAnswerSurvey")
+        .then(function(response) {
+            return response.text();
+        }).then(function(text) {
+        document.getElementById("listQuestions").innerHTML = text;
     });
 
 </script>
