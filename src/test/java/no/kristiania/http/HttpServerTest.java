@@ -4,6 +4,7 @@ import no.kristiania.jdbc.AlternativeDao;
 import no.kristiania.jdbc.QuestionDao;
 import no.kristiania.jdbc.SurveyDao;
 import no.kristiania.jdbc.TestData;
+
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class HttpServerTest {
 
     private final HttpServer server = new HttpServer(0);
+
     SurveyDao surveyDao = new SurveyDao(TestData.testDataSource());
     QuestionDao questionDao = new QuestionDao(TestData.testDataSource());
     AlternativeDao alternativeDao = new AlternativeDao(TestData.testDataSource());
@@ -445,4 +447,3 @@ public class HttpServerTest {
                 "alternativeInput=1");
         assertEquals(303, postDeleteAlternative.getStatusCode());
     }
-}
