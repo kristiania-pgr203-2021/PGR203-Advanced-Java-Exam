@@ -15,6 +15,7 @@ public class DeleteQuestionController implements HttpController {
         this.alternativeDao = alternativeDao;
     }
 
+
     @Override
     public HttpMessage handle(HttpMessage request) throws SQLException, IOException {
         Map<String, String> queryMap = HttpMessage.parseRequestParameters(request.messageBody);
