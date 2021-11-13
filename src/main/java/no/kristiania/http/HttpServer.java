@@ -109,7 +109,6 @@ public class HttpServer {
             writeOk200Response(clientSocket, messageBody, "text/html");
         }
 
-
         InputStream fileResource = getClass().getResourceAsStream(fileTarget);
 
         if (fileResource != null) {
