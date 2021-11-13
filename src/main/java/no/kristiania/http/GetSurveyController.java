@@ -14,19 +14,19 @@ public class GetSurveyController implements HttpController {
 
     @Override
     public HttpMessage handle(HttpMessage request) throws SQLException {
-        String tmpRes = "";
-        String responseTxt = "";
+        String messageBody = "";
+        String tmpName = "";
         long tmpId = -1;
 
         for (Survey survey : surveyDao.listAll()) {
-            tmpRes = UrlEncoding.utf8Value(survey.getSurveyName());
+            tmpName = UrlEncoding.utf8Value(survey.getSurveyName());
             tmpId = survey.getId();
         }
 
-        responseTxt += "Newly added survey: " + tmpRes;
+        messageBody += "Newly added survey: " + tmpName;
         this.surveyId = tmpId;
 
-        return new HttpMessage("200 OK", responseTxt);
+        return new HttpMessage("200 OK", messageBody);
     }
 
     public static long getSurveyId() {

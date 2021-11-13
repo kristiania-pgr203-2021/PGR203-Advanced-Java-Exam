@@ -25,7 +25,7 @@ public class AddSurveyController implements HttpController {
         survey.setSurveyName(decodedValue);
         surveyDao.save(survey);
 
-        return new HttpMessage("303 See Other", "/createSurvey.html" , "Its done");
+        return new HttpMessage("303 See Other", "/createSurvey.html" , "Survey created!");
     }
 
 }

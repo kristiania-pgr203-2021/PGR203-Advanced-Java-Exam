@@ -15,17 +15,16 @@ public class DeleteQuestionController implements HttpController {
         this.alternativeDao = alternativeDao;
     }
 
-
     @Override
     public HttpMessage handle(HttpMessage request) throws SQLException, IOException {
         Map<String, String> queryMap = HttpMessage.parseRequestParameters(request.messageBody);
-        String idInput = queryMap.get("questionInput");
+        String inputId = queryMap.get("questionInput");
 
-        for (Alternative alternative: alternativeDao.listAlternativesByQuestionId(Long.parseLong(idInput))){
+        for (Alternative alternative: alternativeDao.listAlternativesByQuestionId(Long.parseLong(inputId))){
             alternativeDao.deleteByQuestionId(Math.toIntExact(alternative.getQuestionId()));
         }
-        questionDao.delete(Integer.parseInt(idInput));
+        questionDao.delete(Integer.parseInt(inputId));
 
-        return new HttpMessage("303 See Other", "/editSurvey.html", "Its done");
+        return new HttpMessage("303 See Other", "/editSurvey.html", "Question deleted!");
     }
 }

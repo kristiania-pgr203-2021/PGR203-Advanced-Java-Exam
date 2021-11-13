@@ -139,6 +139,57 @@ public class HttpServer {
             String messageBody = "";
             messageBody += "<p>" + mapSurvey.get(this.userId) + "</p>";
             writeOk200Response(clientSocket, messageBody, "text/html");
+        } else if (requestTarget.equals("/api/listQuestionsInAnswerSurvey")) {
+
+
+
+
+            /*
+            int questionId = 0;
+            for (Question question: questionDao.listQuestionsBySurveyId(surveyId)){
+                messageBody +=
+
+                        "<div class=\"white_div\">   \n" +
+                        "        <form action=\"\">\n" +
+                        "            <h1>"+ question.getQuestionText() +"</h1>\n" +
+                        "            <p><label><input type=\"radio\" name=\"alternative\">Alternative 1</label></p>\n" +
+                        "            <p><label><input type=\"radio\" name=\"alternative\">Alternative 2</label></p>\n" +
+                        "            <p></p><label><input type=\"radio\" name=\"alternative\">Alternative 3</label></p>\n" +
+                        "            <button>Submit</button>\n" +
+                        "        </form>\n" +
+                        "</div>";
+
+            }
+            */
+            int alternativeIds = 0;
+            String alternativeText= "";
+            int surveyId = 0;
+            for (Alternative alternative : alternativeDao.listAll()){
+                alternativeIds = Math.toIntExact(alternative.getQuestionId());
+                //alternativeText =
+                System.out.println("Alternativ ID: " + alternativeIds);
+                System.out.println("Alternativ tekst: " + alternativeText + "\r");
+            }
+            for (Question question: questionDao.listAll()){
+                question.getId();
+            }
+
+            String messageBody = "";
+            for (Question question: questionDao.listQuestionsBySurveyId(surveyId)){
+                messageBody += "Dette er question tekst: " +question.getQuestionText() + "Dette er alternative ID: " + alternativeIds +
+                        "<div class=\"white_div\">   \n" +
+                                "        <form action=\"\">\n" +
+                                "            <h1>"+ question.getQuestionText() +"</h1>\n" +
+                                "            <p><label><input type=\"radio\" name=\"alternative\">" + ""  + "</label></p>\n" +
+                                "            <p><label><input type=\"radio\" name=\"alternative\">" + "" + "</p>\n" +
+                                "            <p></p><label><input type=\"radio\" name=\"alternative\">" + "" +"</label></p>\n" +
+                                "            <button>Submit</button>\n" +
+                                "        </form>\n" +
+                                "</div>";
+
+            }
+
+            writeOk200Response(clientSocket, messageBody, "text/html");
         }
 
         InputStream fileResource = getClass().getResourceAsStream(fileTarget);
