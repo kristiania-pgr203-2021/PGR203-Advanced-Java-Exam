@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Join a survey | Kristiania </title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <main>
+       <div id="userForm_div">
+            <h3>Before we begin...</h3>
+            <h3>Please enter your personal information: </h3>
+
+            <form method="post" action="/api/userForm" accept-charset="utf-8">
+                <p><label>Firstname: <input type="text" name="firstName" placeholder="Type your first name here"/></label></p>
+                <p><label>Lastname: <input type="text" name="lastName" placeholder="Type your last name here"/></label></p>
+                <p><label>Email:   <input type="text" name="email" placeholder="Type your email here"/></label></p>
+                <button>Join</button>
+            </form>
+       </div>
+
+        <div id="joinSurvey_div">
+            <h1>Choose a survey you want to join :)</h1>
+            <form method="POST" action="/api/joinSurvey">
+                <p><label>Surveys: <select id="listSurveysForm" name="surveyName"/></label></p>
+                <button>Join</button>
+            </form>
+        </div>
+        <div>
+            <button><a href="index.html">Return to front page</a></button>
+        </div>
+    </main>
+</body>
+
+<script>
+    fetch("/api/listSurveysForm")
+    .then(function(response) {
+        return response.text();
+    }).then(function(text) {
+        document.getElementById("listSurveysForm").innerHTML = text;
+    });
+</script>
+</html>

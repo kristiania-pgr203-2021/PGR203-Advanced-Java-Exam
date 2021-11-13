@@ -3,16 +3,15 @@ package no.kristiania.jdbc;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class SurveyDao {
-    private DataSource dataSource;
+
+    private final DataSource dataSource;
 
     public SurveyDao(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
-    //Insert into db and generate id
     public void save(Survey survey) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(
@@ -24,6 +23,25 @@ public class SurveyDao {
                     rs.next();
                     survey.setId(rs.getLong("id"));
                 }
+            }
+        }
+    }
+
+    public void delete(int id) throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("delete from surveys where id = ?")) {
+                statement.setLong(1, id);
+                statement.executeUpdate();
+            }
+        }
+    }
+
+    public void update(Long id, String surveyName) throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("update surveys set survey_name = ? where id = ?")) {
+                statement.setString(1, surveyName);
+                statement.setLong(2, id);
+                statement.executeUpdate();
             }
         }
     }
@@ -41,8 +59,6 @@ public class SurveyDao {
         }
     }
 
-
-    //Extracted method
     private Survey resultFromResultSet(ResultSet rs) throws SQLException {
         Survey survey = new Survey();
         survey.setId(rs.getLong("id"));
@@ -50,7 +66,7 @@ public class SurveyDao {
         return survey;
     }
 
-    public List<Survey> listAll() throws SQLException {
+    public ArrayList<Survey> listAll() throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("select * from surveys")) {
                 try (ResultSet rs = statement.executeQuery()) {

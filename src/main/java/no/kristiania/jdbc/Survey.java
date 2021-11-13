@@ -4,7 +4,7 @@ public class Survey {
     private Long id;
     private String surveyName;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
