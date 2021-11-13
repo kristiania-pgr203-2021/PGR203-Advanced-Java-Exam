@@ -10,10 +10,8 @@
 <main>
 
     <div class="white_div">
-        <h1>*FAKE SURVEY NAME*</h1>
         <div id="selectedSurvey"></div>
-        <p>*FAKE USER NAME*</p>
-        <div id="listUserAndSurvey"></div>
+        <div id="getUser"></div>
     </div>
 
     <div class="white_div">
@@ -23,16 +21,9 @@
             <label><input type="radio" name="alternative">Alternative 2</label>
             <label><input type="radio" name="alternative">Alternative 3</label>
         </form>
-    </div>
+    </div><br>
 
-    <form method="POST" action="/api/tasks">
-        <label>Question: <select id="questions" name="questions"/></label>
-        <label>Your answer: <input type="text" name="option "/></label>
-        <button>Add</button>
-    </form>
-    <div>
-        <a href="index.html">Return to front page</a>
-    </div>
+    <button><a href="index.html">Return to front page</a></button>
 </main>
 </body>
 
@@ -47,11 +38,11 @@
         document.getElementById("selectedSurvey").innerHTML = text;
     });
 
-    fetch("/api/listUserAndSurvey")
+    fetch("/api/getUser")
         .then(function(response) {
             return response.text();
         }).then(function(text) {
-        document.getElementById("listUserAndSurvey").innerHTML = text;
+        document.getElementById("getUser").innerHTML = text;
     });
 
 </script>

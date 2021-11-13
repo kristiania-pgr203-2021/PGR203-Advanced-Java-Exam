@@ -2,6 +2,7 @@ package no.kristiania.http;
 
 import no.kristiania.jdbc.*;
 
+import javax.sql.DataSource;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,12 +20,15 @@ public class HttpServer {
     private SurveyDao surveyDao;
     private QuestionDao questionDao;
     private AlternativeDao alternativeDao;
+    private UserDao userDao;
     private Survey survey;
     private Question question;
     private Alternative alternative;
     private HashMap<Integer, String> mapSurvey = new HashMap();
     private HashMap<String, HttpController> controllers = new HashMap<>();
     private Integer surveyId;
+    private User user;
+    private Integer userId;
 
     public Survey getSurvey() {
         return survey;
@@ -105,20 +109,36 @@ public class HttpServer {
             writeOk303Response(clientSocket, surveyId, "text/html", location);
 
         } else if (fileTarget.equals("/api/selectedSurvey")) {
-            System.out.println("Hentet fra field og skrives ut på addUser: " + mapSurvey.get(this.surveyId));
+            System.out.println("Survey tittel som skrives ut: " + mapSurvey.get(this.surveyId));
             String messageBody = "";
             messageBody += "<h1>" + mapSurvey.get(this.surveyId) + "</h1>";
             writeOk200Response(clientSocket, messageBody, "text/html");
 
         } else if (requestTarget.equals("/api/userForm")) {
-            String location = "/answerSurvey.html";
             Map<String, String> queryMap = HttpMessage.parseRequestParameters(httpMessage.messageBody);
             String firstName = decodeValue(queryMap.get("firstName"));
             String lastName = decodeValue(queryMap.get("lastName"));
             String email = decodeValue(queryMap.get("email"));
-            System.out.println("First name: " + firstName + " last name: " + lastName + " email: " + email);
 
-            writeOk303Response(clientSocket, "Personal information submitted!", "text/html", location);
+            User user = new User();
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setEmail(email);
+            UserDao userDao = new UserDao(SurveyManager.createDataSource());
+            userDao.save(user);
+            System.out.println("Henter ut bruker ID og navn: " + user.getId() + ", " + user.getFirstName());
+            mapSurvey.put(Math.toIntExact(user.getId()), user.getFirstName());
+            this.userId = Math.toIntExact(user.getId());
+
+            System.out.println("userForm post request inn i databasen: \rFirst name: " + firstName + " last name: " + lastName + " email: " + email);
+            writeOk303Response(clientSocket, "Personal information submitted!", "text/html", "/answerSurvey.html");
+
+        } else if (requestTarget.equals("/api/getUser")) {
+            System.out.println("Brukernavnet som skal skrives ut: " + mapSurvey.get(this.userId));
+
+            String messageBody = "";
+            messageBody += "<p>" + mapSurvey.get(this.userId) + "</p>";
+            writeOk200Response(clientSocket, messageBody, "text/html");
         }
 
         InputStream fileResource = getClass().getResourceAsStream(fileTarget);
@@ -190,6 +210,10 @@ public class HttpServer {
 
     public void setAlternativeDao(AlternativeDao alternativeDao) {
         this.alternativeDao = alternativeDao;
+    }
+
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
     }
 
     public void addController(String path, HttpController controller) {
