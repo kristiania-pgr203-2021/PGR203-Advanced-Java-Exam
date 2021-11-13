@@ -447,5 +447,3 @@ public class HttpServerTest {
                 "alternativeInput=1");
         assertEquals(303, postDeleteAlternative.getStatusCode());
     }
-}
-
