@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,6 +60,7 @@ public class HttpServer {
         int questionPos = requestTarget.indexOf('?');
         String fileTarget;
         String query = null;
+      
         if (questionPos != -1) {
             fileTarget = requestTarget.substring(0, questionPos);
             query = requestTarget.substring(questionPos + 1);
@@ -71,6 +73,7 @@ public class HttpServer {
             response.write(clientSocket);
             return;
         }
+      
         if (fileTarget.equals("/api/listSurveysForm")){
             String messageBody = "";
             int tempId = 0;
@@ -101,8 +104,8 @@ public class HttpServer {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             fileResource.transferTo(buffer);
             String responseText = buffer.toString();
-
             String contentType = "text/plain";
+          
             if (requestTarget.endsWith(".html")) {
                 contentType = "text/html; charset=utf-8";
                 writeOk200Response(clientSocket, responseText, contentType);
