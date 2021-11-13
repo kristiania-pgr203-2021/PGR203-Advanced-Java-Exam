@@ -18,9 +18,7 @@ public class DeleteAlternativeController implements HttpController {
     public HttpMessage handle(HttpMessage request) throws SQLException, IOException {
         Map<String, String> queryMap = HttpMessage.parseRequestParameters(request.messageBody);
         String idInput = queryMap.get("alternativeInput");
-
         alternativeDao.delete(Integer.parseInt(idInput));
-
         return new HttpMessage("303 See Other", "/editSurvey.html", "Its done");
     }
 }

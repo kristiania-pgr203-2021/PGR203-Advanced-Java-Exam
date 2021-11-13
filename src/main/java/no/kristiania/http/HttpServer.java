@@ -10,7 +10,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.Map;
 
 public class HttpServer {
     private static ServerSocket serverSocket;
@@ -21,7 +20,6 @@ public class HttpServer {
     private Question question;
     private Alternative alternative;
 
-    private int questionIdForAlternative;
     private HashMap<String, HttpController> controllers = new HashMap<>();
 
     public Survey getSurvey() {
@@ -74,92 +72,38 @@ public class HttpServer {
             return;
         }
 
-        if (fileTarget.equals("/api/getSurveyId")){
-            String location = "/editSurvey.html";
-            Map<String, String> queryMap = HttpMessage.parseRequestParameters(httpMessage.messageBody);
-            //this.surveyId = Integer.parseInt(queryMap.get("surveyInput"));
-            writeOk303Response(clientSocket, "survey id set", "text/html", location);
+        InputStream fileResource = getClass().getResourceAsStream(fileTarget);
 
-            //TODO: Henter question ID for å sette veriden i questionId * 2         !!Refactored!!
-        } else if (fileTarget.equals("/api/getQuestionIdInEdit")){
-            String location = "/editSurvey.html";
-            Map<String, String> queryMap = HttpMessage.parseRequestParameters(httpMessage.messageBody);
+        if (fileResource != null) {
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            fileResource.transferTo(buffer);
+            String responseText = buffer.toString();
 
-            int id = Integer.parseInt(queryMap.get("questionInput"));
-            this.questionIdForAlternative = id;
-
-            writeOk303Response(clientSocket, "survey id set", "text/html", location);
-
-            //TODO: Sletter question og tilhørende alternatives     !!Refactored!!
-        } else if (fileTarget.equals("/api/deleteAlternative")) {
-            String location = "/editSurvey.html";
-            AlternativeDao aDao = new AlternativeDao(SurveyManager.createDataSource());
-            Map<String, String> queryMap = HttpMessage.parseRequestParameters(httpMessage.messageBody);
-            String idInput = queryMap.get("alternativeInput");
-
-            aDao.delete(Integer.parseInt(idInput));
-
-            writeOk303Response(clientSocket, "deleted", "text/html", location);
-
-            //TODO: Sletter question og tilhørende alternatives     !!Refactored!!
-        } else if (fileTarget.equals("/api/deleteQuestion")) {
-                String location = "/editSurvey.html";
-                QuestionDao qDao = new QuestionDao(SurveyManager.createDataSource());
-                Map<String, String> queryMap = HttpMessage.parseRequestParameters(httpMessage.messageBody);
-                String idInput = queryMap.get("questionInput");
-
-                for (Alternative alternative: alternativeDao.listAlternativesByQuestionId(Long.parseLong(idInput))){
-                    alternativeDao.deleteByQuestionId(Math.toIntExact(alternative.getQuestionId()));
-                }
-                qDao.delete(Integer.parseInt(idInput));
-
-                writeOk303Response(clientSocket, "deleted", "text/html", location);
-
-            //TODO: Sletter alternative                               !!Refactored!!!
-        } else if (fileTarget.equals("/api/deleteAlternative")) {
-            String location = "/editSurvey.html";
-            AlternativeDao aDao = new AlternativeDao(SurveyManager.createDataSource());
-            Map<String, String> queryMap = HttpMessage.parseRequestParameters(httpMessage.messageBody);
-            String idInput = queryMap.get("alternativeInput");
-
-            aDao.delete(Integer.parseInt(idInput));
-
-            writeOk303Response(clientSocket, "deleted", "text/html", location);
-
-        } else {
-            InputStream fileResource = getClass().getResourceAsStream(fileTarget);
-
-            if (fileResource != null) {
-                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-                fileResource.transferTo(buffer);
-                String responseText = buffer.toString();
-
-                String contentType = "text/plain";
-                if (requestTarget.endsWith(".html")) {
-                    contentType = "text/html; charset=utf-8";
-                    writeOk200Response(clientSocket, responseText, contentType);
-                }
-
-                if (requestTarget.endsWith(".css")) {
-                    contentType = "text/css; charset=utf-8";
-                    writeOk200Response(clientSocket, responseText, contentType);
-                }
-
-                if (requestTarget.endsWith("/")) {
-                    contentType = "text/html; charset=utf-8";
-                    String location = "/index.html";
-                    writeOk303Response(clientSocket, responseText, contentType, location);
-                }
+            String contentType = "text/plain";
+            if (requestTarget.endsWith(".html")) {
+                contentType = "text/html; charset=utf-8";
+                writeOk200Response(clientSocket, responseText, contentType);
             }
 
-            String responseText = "File not found: " + requestTarget;
-            String response = "HTTP/1.1 404 Not found\r\n" +
-                    "Content-Length: " + responseText.length() + "\r\n" +
-                    "Connection: close\r\n" +
-                    "\r\n" +
-                    responseText;
-            clientSocket.getOutputStream().write(response.getBytes());
+            if (requestTarget.endsWith(".css")) {
+                contentType = "text/css; charset=utf-8";
+                writeOk200Response(clientSocket, responseText, contentType);
+            }
+
+            if (requestTarget.endsWith("/")) {
+                contentType = "text/html; charset=utf-8";
+                String location = "/index.html";
+                writeOk303Response(clientSocket, responseText, contentType, location);
+            }
         }
+
+        String responseText = "File not found: " + requestTarget;
+        String response = "HTTP/1.1 404 Not found\r\n" +
+                "Content-Length: " + responseText.length() + "\r\n" +
+                "Connection: close\r\n" +
+                "\r\n" +
+                responseText;
+        clientSocket.getOutputStream().write(response.getBytes());
     }
 
     private void writeOk200Response(Socket clientSocket, String responseText, String contentType) throws IOException {
