@@ -178,45 +178,11 @@ public class HttpServer {
                 System.out.println("Question ID: " + questionId);
                 System.out.println("Question text: " + questionText);
                 System.out.println("Question ID fra FIELD: " + this.questionId);
-                //System.out.println("Question ID fra FIELD: " + this.questionId);
-
-                //messageBody += "test";
-                                /*"<div>" +
-                                "<h2>" + questionText +"</h2>" +
-                                "<form action=\"/api/answer\" method=\"POST\" accept-charset=\"UTF-8\"" +
-                                "<p><label><input type=\"radio\" name=\"alternative\">" + "ALTERNATIV KOMMER" + "</label></p>" +
-                                "<p><label><input type=\"radio\" name=\"alternative\">" + "ALTERNATIV KOMMER" + "</label></p>" +
-                                "<p><label><input type=\"radio\" name=\"alternative\">" + "ALTERNATIV KOMMER" + "</label></p>" +
-                                "</form>" + "</div>";*/
+                
             }
-            System.out.println("UTE AV LØKKE IGJEN :(");
+            
 
-            // Lister ut alle alternativer med ID og tekst
-            /*int alternativeIds = 0;
-            String alternativeText= "";
-            int surveyId = 0;
-            for (Alternative alternative : alternativeDao.listAlternativesByQuestionId(this.questionId)){
-                alternativeIds = Math.toIntExact(alternative.getQuestionId());
-                alternativeText = alternative.getAlternative();
-                System.out.println("Alternativ ID: " + alternativeIds);
-                System.out.println("Alternativ tekst: " + alternativeText + "\r");
-            }*/
-
-            /*
-            String messageBody2 = "";
-            for (Question question: questionDao.listQuestionsBySurveyId(surveyId)){
-                messageBody += "Dette er question tekst: " +question.getQuestionText() + "Dette er alternative ID: " + alternativeIds +
-                        "<div class=\"white_div\">   \n" +
-                                "        <form action=\"\">\n" +
-                                "            <h1>"+ question.getQuestionText() +"</h1>\n" +
-                                "            <p><label><input type=\"radio\" name=\"alternative\">" + ""  + "</label></p>\n" +
-                                "            <p><label><input type=\"radio\" name=\"alternative\">" + "" + "</p>\n" +
-                                "            <p></p><label><input type=\"radio\" name=\"alternative\">" + "" +"</label></p>\n" +
-                                "            <button>Submit</button>\n" +
-                                "        </form>\n" +
-                                "</div>";
-
-            }*/
+         
 
             writeOk200Response(clientSocket, messageBody, "text/html");
         }
