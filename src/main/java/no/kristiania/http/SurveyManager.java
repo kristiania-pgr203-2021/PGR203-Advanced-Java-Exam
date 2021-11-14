@@ -1,5 +1,7 @@
 package no.kristiania.http;
 
+
+import no.kristiania.jdbc.*;
 import no.kristiania.jdbc.AlternativeDao;
 import no.kristiania.jdbc.AnswerDao;
 import no.kristiania.jdbc.QuestionDao;
@@ -23,6 +25,7 @@ public class SurveyManager {
         SurveyDao surveyDao = new SurveyDao(dataSource);
         QuestionDao questionDao = new QuestionDao(dataSource);
         AlternativeDao alternativeDao = new AlternativeDao(dataSource);
+        UserDao userDao = new UserDao(dataSource);
         AnswerDao answerDao = new AnswerDao(dataSource);
 
         //createSurvey.html
@@ -44,6 +47,16 @@ public class SurveyManager {
         httpServer.addController("/api/deleteQuestion", new DeleteQuestionController(questionDao, alternativeDao)); //TODO Delete existing question
         httpServer.addController("/api/listAlternativesInEdit", new ListAlternativesInEditController(alternativeDao)); //TODO: List all alternatives belonging to a question
         httpServer.addController("/api/editAlternative", new EditAlternativeController(alternativeDao)); //TODO: Edit existing alternative
+        httpServer.addController("/api/deleteAlternative", new DeleteAlternativeController(alternativeDao)); //TODO: Dele existing alternative
+
+        //joinSurvey.html
+        httpServer.addController("/api/listSurveysForm", new ListSurveysFormController(surveyDao)); //TODO: List all created surveys with a scrollbar
+        httpServer.addController("/api/joinSurvey", new JoinSurveyController(surveyDao));
+        httpServer.addController("/api/selectedSurvey", new SelectedSurveyController());
+        httpServer.addController("/api/userForm", new UserFormController(userDao));
+        httpServer.addController("/api/getUser", new GetUserController(userDao));
+        httpServer.addController("/api/listQuestionsInAnswerSurvey", new ListQuestionsAndAlternativesController(questionDao, alternativeDao));
+        httpServer.addController("/api/answer", new AnswerController(alternativeDao, answerDao));
 
         //listAllAnsweredSurveys.html
         //httpServer.addController("/api/selectAnsweredSurveys", new SelectAnsweredSurveys(surveyDao)); //TODO: Gets surveyId
@@ -56,6 +69,8 @@ public class SurveyManager {
         httpServer.setSurveyDao(new SurveyDao(dataSource));
         httpServer.setQuestionDao(new QuestionDao(dataSource));
         httpServer.setAlternativeDao(new AlternativeDao(dataSource));
+        httpServer.setUserDao(new UserDao(dataSource));
+        httpServer.setAnswerDao(new AnswerDao(dataSource));
 
         logger.info("Starting http://localhost:{}/index.html", httpServer.getPort());
         logger.info("Starting http://localhost:{}/createSurvey.html", httpServer.getPort());

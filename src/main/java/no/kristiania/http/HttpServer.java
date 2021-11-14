@@ -22,7 +22,8 @@ public class HttpServer {
     private Survey survey;
     private Question question;
     private Alternative alternative;
-    private HashMap<Integer, String> mapSurvey = new HashMap();
+    public static HashMap<Integer, String> mapSurvey = new HashMap();
+    public static HashMap<Integer, String> mapUser = new HashMap();
     private HashMap<Integer, Integer> alternativeQuestionMap = new HashMap<>();
     private HashMap<String, HttpController> controllers = new HashMap<>();
     private Integer surveyId;
@@ -267,6 +268,7 @@ public class HttpServer {
             writeOk200Response(clientSocket, responseTxt, "text/html");
         }
 
+
         InputStream fileResource = getClass().getResourceAsStream(fileTarget);
 
         if (fileResource != null) {
@@ -345,6 +347,10 @@ public class HttpServer {
 
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
+    }
+
+    public void setAnswerDao(AnswerDao answerdao) {
+        this.answerdao = answerdao;
     }
 
     public void addController(String path, HttpController controller) {
