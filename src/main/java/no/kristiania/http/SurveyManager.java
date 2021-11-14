@@ -1,6 +1,11 @@
 package no.kristiania.http;
 
+
 import no.kristiania.jdbc.*;
+import no.kristiania.jdbc.AlternativeDao;
+import no.kristiania.jdbc.AnswerDao;
+import no.kristiania.jdbc.QuestionDao;
+import no.kristiania.jdbc.SurveyDao;
 import org.flywaydb.core.Flyway;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
@@ -52,6 +57,14 @@ public class SurveyManager {
         httpServer.addController("/api/getUser", new GetUserController(userDao));
         httpServer.addController("/api/listQuestionsInAnswerSurvey", new ListQuestionsAndAlternativesController(questionDao, alternativeDao));
         httpServer.addController("/api/answer", new AnswerController(alternativeDao, answerDao));
+
+        //listAllAnsweredSurveys.html
+        //httpServer.addController("/api/selectAnsweredSurveys", new SelectAnsweredSurveys(surveyDao)); //TODO: Gets surveyId
+        httpServer.addController("/api/listAllQuestionsBySurveyId", new ListAllQuestionsBySurveyId(questionDao)); //TODO: List all questions by surveyID
+        httpServer.addController("/api/selectAnsweredQuestion", new SelectAnsweredQuestion(questionDao));
+        httpServer.addController("/api/listAllAnswers", new ListAllAnswers(answerDao));
+        httpServer.addController("/api/selectedQuestion", new SelectedQuestion());
+
 
         httpServer.setSurveyDao(new SurveyDao(dataSource));
         httpServer.setQuestionDao(new QuestionDao(dataSource));

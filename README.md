@@ -22,7 +22,7 @@
 
 ### Ekstra leveranse:
 * Programmet kan slette eksisterende spørreundersøkelse, spørsmål og alternativ. Dersom en spørreundersøkelse blir slettet, slettes alt som
-* følger med også (tilhørende spørsmål + alternativ). Dette gjelder ved sletting av spørsmål også. 
+følger med også (tilhørende spørsmål + alternativ). Dette gjelder ved sletting av spørsmål også. 
 
 ## Vedlegg: Sjekkliste for innlevering
 

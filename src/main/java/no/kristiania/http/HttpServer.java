@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +31,10 @@ public class HttpServer {
     private Integer userId;
     private long questionId;
     private AnswerDao answerdao;
+
+    public Integer getSurveyId() {
+        return surveyId;
+    }
 
     public Survey getSurvey() {
         return survey;
@@ -83,6 +86,188 @@ public class HttpServer {
             response.write(clientSocket);
             return;
         }
+      
+        if (fileTarget.equals("/api/listSurveysForm")){
+            String messageBody = "";
+
+            for (Survey survey : surveyDao.listAll()) {
+                int value = Math.toIntExact(survey.getId());
+                System.out.println("SurveyID: " + value);
+                messageBody += "<option value=" + (value) + ">" + "ID: " + survey.getId() + " " + survey.getSurveyName() + "</option>";
+            }
+
+            System.out.println("This is messagebody (HTML): " + messageBody);
+            writeOk200Response(clientSocket, messageBody, "text/html");
+
+        } else if(fileTarget.equals("/api/joinSurvey")){
+            String location = "/addUser.html";
+            Map<String, String> queryMap = HttpMessage.parseRequestParameters(httpMessage.messageBody);
+            String surveyId = queryMap.get("surveyName");
+
+            System.out.println("Valgte survey sin ID: " + surveyId);
+            System.out.println("Valgte survey sin tittel (retrieve): " + surveyDao.retrieve(Long.parseLong(surveyId)));
+            String[] name = String.valueOf(surveyDao.retrieve(Long.parseLong(surveyId))).split("'");
+            System.out.println("Survey etter split: " + name[1]);
+
+            mapSurvey.put(Integer.valueOf(surveyId), name[1]);
+            this.surveyId = Integer.valueOf(surveyId);
+
+            writeOk303Response(clientSocket, surveyId, "text/html", location);
+
+        } else if (fileTarget.equals("/api/selectedSurvey")) {
+            System.out.println("Survey tittel som skrives ut: " + mapSurvey.get(this.surveyId));
+            String messageBody = "";
+            messageBody += "<h1>" + mapSurvey.get(this.surveyId) + "</h1>";
+            writeOk200Response(clientSocket, messageBody, "text/html");
+
+        } else if (requestTarget.equals("/api/userForm")) {
+            Map<String, String> queryMap = HttpMessage.parseRequestParameters(httpMessage.messageBody);
+            String firstName = decodeValue(queryMap.get("firstName"));
+            String lastName = decodeValue(queryMap.get("lastName"));
+            String email = decodeValue(queryMap.get("email"));
+
+            User user = new User();
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setEmail(email);
+            UserDao userDao = new UserDao(SurveyManager.createDataSource());
+            userDao.save(user);
+            System.out.println("Henter ut bruker ID og navn: " + user.getId() + ", " + user.getFirstName());
+            mapSurvey.put(Math.toIntExact(user.getId()), user.getFirstName());
+            this.userId = Math.toIntExact(user.getId());
+
+            System.out.println("userForm post request inn i databasen: \rFirst name: " + firstName + " last name: " + lastName + " email: " + email);
+            writeOk303Response(clientSocket, "Personal information submitted!", "text/html", "/answerSurvey.html");
+
+        } else if (requestTarget.equals("/api/getUser")) {
+            System.out.println("Brukernavnet som skal skrives ut: " + mapSurvey.get(this.userId));
+            String messageBody = "";
+            messageBody += "<p>" + mapSurvey.get(this.userId) + "</p>";
+            writeOk200Response(clientSocket, messageBody, "text/html");
+
+        } else if (requestTarget.equals("/api/listQuestionsInAnswerSurvey")) {
+            String messageBody = "";
+            System.out.println("Survey ID som vi henter ned: " + this.surveyId);
+
+            /** Lister ut alle spørsmål tilhørende en survey **/
+            int questionId = 0;
+            String questionText = "";
+            for (Question question : questionDao.listQuestionsBySurveyId(this.surveyId)) {
+                /** Starten på messageBody **/
+                messageBody +=
+                        "<div class=\"white_div\">" +
+                                "<h2>Question ID: " + question.getId() + ", Tekst: " + question.getQuestionText() +"</h2>" +
+                                "<form action=\"api/answer\" method=\"POST\" accept-charset=\"UTF-8\">";
+
+                /** Looper ut alle alternativene og bygger messageBody **/
+                int alternativeIds = 0;
+                String alternativeText= "";
+                for (Alternative alternative : alternativeDao.listAlternativesByQuestionId(question.getId())){
+                    alternativeIds = Math.toIntExact(alternative.getId());
+                    alternativeText = alternative.getAlternative();
+                    messageBody += "<p><label><input type=\"radio\" name=\"answerInput\" value=\"" + (alternativeIds) + "\">" + alternativeText +"</label></p>";
+                }
+
+                /** Avsluttende tag på messageBody**/
+                messageBody += "<button>Submit</button>" +
+                        "</form>" +
+                        "</div>";
+                System.out.println(messageBody);
+            }
+            writeOk200Response(clientSocket, messageBody, "text/html");
+
+        } else if (fileTarget.equals("/api/answer")) {
+            Map<String, String> queryMap = HttpMessage.parseRequestParameters(httpMessage.messageBody);
+            int alternativeId = Integer.parseInt(queryMap.get("answerInput"));
+            System.out.println("SVAR: Alternativ ID: " + alternativeId);
+            String[] alternativeArray = String.valueOf(alternativeDao.retrieve(alternativeId)).split("'");
+            System.out.println("Alternative retrieve: " + alternativeDao.retrieve(alternativeId));
+            System.out.println(alternativeArray[3]);
+
+            Answer answer = new Answer();
+            answer.setAlternativeId(Long.valueOf(alternativeId));
+            System.out.println("Alternativ ID satt: " + Long.valueOf(alternativeId));
+            answer.setQuestionId(Long.valueOf(alternativeArray[3]));
+            System.out.println("Question ID satt til: " + Long.valueOf(alternativeArray[3]));
+            answer.setUserId(Long.valueOf(this.userId));
+            System.out.println("Bruker ID satt: " + Long.valueOf(this.userId));
+            AnswerDao answerDao = new AnswerDao(SurveyManager.createDataSource());
+            answerDao.save(answer);
+
+            writeOk303Response(clientSocket, "Answer submitted!", "text/html", "/answerSurvey.html");
+
+        }
+
+        else if(fileTarget.equals("/api/selectAnsweredSurveys")) {
+
+            String location = "/listAnsweredQuestions.html";                      //TODO: !!!!IKKE FERDIG!!!!
+            Map<String, String> queryMap = HttpMessage.parseRequestParameters(httpMessage.messageBody);
+            String surveyId = queryMap.get("surveyName");
+
+            System.out.println("Valgte survey sin ID: " + surveyId);
+            System.out.println("Valgte survey sin tittel (retrieve): " + surveyDao.retrieve(Long.parseLong(surveyId)));
+            String[] name = String.valueOf(surveyDao.retrieve(Long.parseLong(surveyId))).split("'");
+            System.out.println("Survey etter split: " + name[1]);
+
+            mapSurvey.put(Integer.valueOf(surveyId), name[1]);
+            this.surveyId = Integer.valueOf(surveyId);
+
+            writeOk303Response(clientSocket, surveyId, "text/html", location);
+
+        }
+
+        if (fileTarget.equals("/api/listAllQuestionsBySurveyId")){                       //TODO: !!!!refactored!!!!
+            String messageBody = "";
+
+            for (Question question : questionDao.listQuestionsBySurveyId(surveyId)) {
+                int value = Math.toIntExact(question.getId());
+                System.out.println("QuestionID: " + value);
+                messageBody += "<option value=" + (value) + ">" + "ID: " + question.getId() + " " + question.getQuestionText() + "</option>";
+            }
+
+            System.out.println("This is messagebody (HTML): " + messageBody);
+            writeOk200Response(clientSocket, messageBody, "text/html");
+
+        } else if(fileTarget.equals("/api/selectAnsweredQuestion")) {                  //TODO: !!!!! Ikke helt ferdig!!!!!
+
+            String location = "/listAnsweredQuestions.html";
+            Map<String, String> queryMap = HttpMessage.parseRequestParameters(httpMessage.messageBody);
+            String questionId = queryMap.get("questionName");
+
+            System.out.println("Valgte question sin ID: " + questionId);
+            System.out.println("Valgte question sin tittel (retrieve): " + questionDao.retrieve(Long.parseLong(questionId)));
+            String[] name = String.valueOf(questionDao.retrieve(Long.parseLong(questionId))).split("'");
+            System.out.println("qyestion etter split: " + name[1]);
+
+            mapSurvey.put(Integer.valueOf(questionId), name[1]);
+            this.questionId = Integer.valueOf(questionId);
+
+            writeOk303Response(clientSocket,questionId, "text/html", location);
+
+        } else if (fileTarget.equals("/api/listAllAnswers")){                       //TODO: !!!! refactored !!!!
+            AnswerDao answerDao = new AnswerDao(SurveyManager.createDataSource());
+            System.out.println("Dette er survey id: "+surveyId);
+            System.out.println("Dette er en question id"+questionId);
+        String responseTxt = "";
+        for (FullAnswer fullAnswer: answerDao.retrieveFullAnswer(surveyId, questionId)){
+            responseTxt +=
+                    "<h4>" + fullAnswer.getFirstName() + " " + fullAnswer.getLastName()  + " " +
+                            " | " + fullAnswer.getAlternative() + "</h4>" ;
+        }
+            writeOk200Response(clientSocket, responseTxt, "text/html");
+
+        } else if (fileTarget.equals("/api/selectedQuestion")) {                    //TODO: !!! DU ER HER NÅ !!!
+            QuestionDao questionDao = new QuestionDao(SurveyManager.createDataSource());
+            System.out.println("DENNE IDEN ØNSKER DU Å SE!" + questionId);
+
+            String responseTxt = "";
+            if (questionId != 0) {
+                responseTxt += "<h3>" + (questionDao.retrieve(questionId).getQuestionText()) + "</h3>";
+                System.out.println(responseTxt);
+            }
+            writeOk200Response(clientSocket, responseTxt, "text/html");
+        }
+
 
         InputStream fileResource = getClass().getResourceAsStream(fileTarget);
 

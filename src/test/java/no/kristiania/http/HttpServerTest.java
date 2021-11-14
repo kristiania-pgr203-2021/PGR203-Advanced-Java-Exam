@@ -523,4 +523,14 @@ public class HttpServerTest {
 
 
     }
+
+    @Test
+    void shouldListAllQuestionBySurveyId() {
+        server.addController("/api/listAllQuestionsBySurveyIdForAnswers", new ListAllQuestionsBySurveyId(questionDao));
+    }
+
+    @Test
+    void shouldGetSurveyNameFromList() {
+        server.addController("/api/selectAnsweredSurveys", new SelectAnsweredSurveys(surveyDao));
+    }
 }

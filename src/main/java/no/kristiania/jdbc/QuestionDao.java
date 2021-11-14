@@ -55,7 +55,7 @@ public class QuestionDao {
         }
     }
 
-    public Question retrieve(Long id) throws SQLException {
+    public Question retrieve(long id) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("select * from questions where id = ?")) {
                 statement.setLong(1, id);
