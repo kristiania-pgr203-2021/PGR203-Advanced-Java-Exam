@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static no.kristiania.http.UrlEncoding.decodeValue;
+import static no.kristiania.http.UrlEncoding.utf8Value;
 
 public class HttpServer {
     private static ServerSocket serverSocket;
@@ -29,6 +30,7 @@ public class HttpServer {
     private Integer surveyId;
     private User user;
     private Integer userId;
+    private long questionId;
 
     public Survey getSurvey() {
         return survey;
@@ -135,46 +137,73 @@ public class HttpServer {
 
         } else if (requestTarget.equals("/api/getUser")) {
             System.out.println("Brukernavnet som skal skrives ut: " + mapSurvey.get(this.userId));
-
             String messageBody = "";
             messageBody += "<p>" + mapSurvey.get(this.userId) + "</p>";
             writeOk200Response(clientSocket, messageBody, "text/html");
+
         } else if (requestTarget.equals("/api/listQuestionsInAnswerSurvey")) {
+            String messageBody = "";
+            System.out.println("Survey ID som vi henter ned: " + this.surveyId);
 
-
-
-
-            /*
+            /** Lister ut alle spørsmål tilhørende en survey **/
             int questionId = 0;
-            for (Question question: questionDao.listQuestionsBySurveyId(surveyId)){
-                messageBody +=
+            String questionText = "";
+            for (Question question : questionDao.listQuestionsBySurveyId(this.surveyId)) {
+                //this.questionId = question.getId();
 
-                        "<div class=\"white_div\">   \n" +
-                        "        <form action=\"\">\n" +
-                        "            <h1>"+ question.getQuestionText() +"</h1>\n" +
-                        "            <p><label><input type=\"radio\" name=\"alternative\">Alternative 1</label></p>\n" +
-                        "            <p><label><input type=\"radio\" name=\"alternative\">Alternative 2</label></p>\n" +
-                        "            <p></p><label><input type=\"radio\" name=\"alternative\">Alternative 3</label></p>\n" +
-                        "            <button>Submit</button>\n" +
-                        "        </form>\n" +
+                /** Starten på messageBody **/
+                messageBody +=
+                        "<div class=\"white_div\">" +
+                                "<h2>Question ID: " + question.getId() + ", Tekst: " + question.getQuestionText() +"</h2>" +
+                                "<form action=\"api/answer\" method=\"POSt\" accept-charset=\"UTF-8\">";
+
+                int alternativeIds = 0;
+                String alternativeText= "";
+                /** Looper ut alle alternativene og bygger messageBody **/
+                for (Alternative alternative : alternativeDao.listAlternativesByQuestionId(question.getId())){
+                    alternativeIds = Math.toIntExact(alternative.getQuestionId());
+                    alternativeText = alternative.getAlternative();
+                    messageBody += "<p><label><input type=\"radio\" name=\"answerInput\">" + alternativeText +"</label></p>";
+                }
+
+                /** Avsluttende tag på messageBody**/
+                messageBody += "<button>Submit</button>" +
+                        "</form>" +
                         "</div>";
 
+
+                questionId = Math.toIntExact(question.getId());
+                questionText = question.getQuestionText();
+                this.questionId = questionId;
+                System.out.println("Question ID: " + questionId);
+                System.out.println("Question text: " + questionText);
+                System.out.println("Question ID fra FIELD: " + this.questionId);
+                //System.out.println("Question ID fra FIELD: " + this.questionId);
+
+                //messageBody += "test";
+                                /*"<div>" +
+                                "<h2>" + questionText +"</h2>" +
+                                "<form action=\"/api/answer\" method=\"POST\" accept-charset=\"UTF-8\"" +
+                                "<p><label><input type=\"radio\" name=\"alternative\">" + "ALTERNATIV KOMMER" + "</label></p>" +
+                                "<p><label><input type=\"radio\" name=\"alternative\">" + "ALTERNATIV KOMMER" + "</label></p>" +
+                                "<p><label><input type=\"radio\" name=\"alternative\">" + "ALTERNATIV KOMMER" + "</label></p>" +
+                                "</form>" + "</div>";*/
             }
-            */
-            int alternativeIds = 0;
+            System.out.println("UTE AV LØKKE IGJEN :(");
+
+            // Lister ut alle alternativer med ID og tekst
+            /*int alternativeIds = 0;
             String alternativeText= "";
             int surveyId = 0;
-            for (Alternative alternative : alternativeDao.listAll()){
+            for (Alternative alternative : alternativeDao.listAlternativesByQuestionId(this.questionId)){
                 alternativeIds = Math.toIntExact(alternative.getQuestionId());
-                //alternativeText =
+                alternativeText = alternative.getAlternative();
                 System.out.println("Alternativ ID: " + alternativeIds);
                 System.out.println("Alternativ tekst: " + alternativeText + "\r");
-            }
-            for (Question question: questionDao.listAll()){
-                question.getId();
-            }
+            }*/
 
-            String messageBody = "";
+            /*
+            String messageBody2 = "";
             for (Question question: questionDao.listQuestionsBySurveyId(surveyId)){
                 messageBody += "Dette er question tekst: " +question.getQuestionText() + "Dette er alternative ID: " + alternativeIds +
                         "<div class=\"white_div\">   \n" +
@@ -187,7 +216,7 @@ public class HttpServer {
                                 "        </form>\n" +
                                 "</div>";
 
-            }
+            }*/
 
             writeOk200Response(clientSocket, messageBody, "text/html");
         }
