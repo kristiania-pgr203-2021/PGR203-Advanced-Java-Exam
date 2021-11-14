@@ -2,7 +2,6 @@ package no.kristiania.http;
 
 import no.kristiania.jdbc.*;
 
-import javax.sql.DataSource;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static no.kristiania.http.UrlEncoding.decodeValue;
-import static no.kristiania.http.UrlEncoding.utf8Value;
 
 public class HttpServer {
     private static ServerSocket serverSocket;
