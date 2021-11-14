@@ -11,7 +11,6 @@ import static no.kristiania.http.UrlEncoding.decodeValue;
 public class AddSurveyController implements HttpController {
 
     private final SurveyDao surveyDao;
-    private Survey survey;
 
     public AddSurveyController(SurveyDao surveyDao) {
         this.surveyDao = surveyDao;
@@ -20,7 +19,7 @@ public class AddSurveyController implements HttpController {
     @Override
     public HttpMessage handle(HttpMessage request) throws SQLException {
         Map<String, String> queryMap = HttpMessage.parseRequestParameters(request.messageBody);
-        this.survey = new Survey();
+        Survey survey = new Survey();
         String decodedValue = decodeValue(queryMap.get("surveyInput"));
         survey.setSurveyName(decodedValue);
         surveyDao.save(survey);
