@@ -4,12 +4,12 @@ import no.kristiania.jdbc.QuestionDao;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Map;
+
+import static no.kristiania.http.HttpServer.mapSurvey;
 
 public class SelectAnsweredQuestion implements HttpController {
     private final QuestionDao questionDao;
-    private HashMap<Integer, String> mapSurvey = new HashMap();
     private static Integer questionId = 1;
 
     public static Integer getQuestionId() {

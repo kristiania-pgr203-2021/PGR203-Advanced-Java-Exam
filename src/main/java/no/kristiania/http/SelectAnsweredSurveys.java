@@ -4,15 +4,15 @@ import no.kristiania.jdbc.SurveyDao;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Map;
+
+import static no.kristiania.http.HttpServer.mapSurvey;
 
 public class SelectAnsweredSurveys implements HttpController {
     private final SurveyDao surveyDao;
-    private HashMap<Integer, String> mapSurvey = new HashMap();
     private static int surveyId = 1;
 
-    public static int getSurveyId() {
+    public static Integer getSurveyId() {
         return surveyId;
     }
 
@@ -30,11 +30,14 @@ public class SelectAnsweredSurveys implements HttpController {
         String[] name = String.valueOf(surveyDao.retrieve(Long.parseLong(surveyId))).split("'");
         System.out.println("Survey etter split: " + name[1]);
 
+
+        System.out.println("Dette er før");
         mapSurvey.put(Integer.valueOf(surveyId), name[1]);
+        System.out.println("Dette er etter");
         this.surveyId = Integer.valueOf(surveyId);
 
 
-        return new HttpMessage("303, See Other","/api/selectAnsweredSurveys", surveyId);
+        return new HttpMessage("303 See Other","/listAnsweredQuestions.html", "surveyId");
 
     }
 }

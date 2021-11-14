@@ -59,7 +59,7 @@ public class SurveyManager {
         httpServer.addController("/api/answer", new AnswerController(alternativeDao, answerDao));
 
         //listAllAnsweredSurveys.html
-        //httpServer.addController("/api/selectAnsweredSurveys", new SelectAnsweredSurveys(surveyDao)); //TODO: Gets surveyId
+        httpServer.addController("/api/selectAnsweredSurveys", new SelectAnsweredSurveys(surveyDao)); //TODO: Gets surveyId
         httpServer.addController("/api/listAllQuestionsBySurveyId", new ListAllQuestionsBySurveyId(questionDao)); //TODO: List all questions by surveyID
         httpServer.addController("/api/selectAnsweredQuestion", new SelectAnsweredQuestion(questionDao));
         httpServer.addController("/api/listAllAnswers", new ListAllAnswers(answerDao));

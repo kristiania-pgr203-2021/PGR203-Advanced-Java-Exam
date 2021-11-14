@@ -17,6 +17,6 @@ public class SelectedQuestion implements HttpController {
             System.out.println(responseTxt);
         }
 
-        return new HttpMessage("200, OK", responseTxt);
+        return new HttpMessage("200 OK", responseTxt);
     }
 }
