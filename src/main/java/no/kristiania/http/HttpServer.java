@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -191,6 +190,9 @@ public class HttpServer {
             answerDao.save(answer);
 
             writeOk303Response(clientSocket, "Answer submitted!", "text/html", "/answerSurvey.html");
+
+        } else if(fileTarget.equals("/api/listAnsweredSurveys")) {
+
         }
 
         InputStream fileResource = getClass().getResourceAsStream(fileTarget);
