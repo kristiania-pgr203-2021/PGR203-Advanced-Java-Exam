@@ -2,7 +2,6 @@ package no.kristiania.http;
 
 import no.kristiania.jdbc.*;
 
-import javax.sql.DataSource;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static no.kristiania.http.UrlEncoding.decodeValue;
-import static no.kristiania.http.UrlEncoding.utf8Value;
 
 public class HttpServer {
     private static ServerSocket serverSocket;
@@ -26,11 +24,13 @@ public class HttpServer {
     private Question question;
     private Alternative alternative;
     private HashMap<Integer, String> mapSurvey = new HashMap();
+    private HashMap<Integer, Integer> alternativeQuestionMap = new HashMap<>();
     private HashMap<String, HttpController> controllers = new HashMap<>();
     private Integer surveyId;
     private User user;
     private Integer userId;
     private long questionId;
+    private AnswerDao answerdao;
 
     public Survey getSurvey() {
         return survey;
@@ -149,42 +149,48 @@ public class HttpServer {
             int questionId = 0;
             String questionText = "";
             for (Question question : questionDao.listQuestionsBySurveyId(this.surveyId)) {
-                //this.questionId = question.getId();
-
                 /** Starten på messageBody **/
                 messageBody +=
                         "<div class=\"white_div\">" +
                                 "<h2>Question ID: " + question.getId() + ", Tekst: " + question.getQuestionText() +"</h2>" +
                                 "<form action=\"api/answer\" method=\"POSt\" accept-charset=\"UTF-8\">";
 
+                /** Looper ut alle alternativene og bygger messageBody **/
                 int alternativeIds = 0;
                 String alternativeText= "";
-                /** Looper ut alle alternativene og bygger messageBody **/
                 for (Alternative alternative : alternativeDao.listAlternativesByQuestionId(question.getId())){
+                    //alternativeQuestionMap.put(alternativeIds, Math.toIntExact(question.getId()));
                     alternativeIds = Math.toIntExact(alternative.getQuestionId());
                     alternativeText = alternative.getAlternative();
-                    messageBody += "<p><label><input type=\"radio\" name=\"answerInput\">" + alternativeText +"</label></p>";
+                    messageBody += "<p><label><input type=\"radio\" name=\"answerInput\" value=\"" + alternativeIds + "\">" + alternativeText +"</label></p>";
                 }
 
                 /** Avsluttende tag på messageBody**/
                 messageBody += "<button>Submit</button>" +
                         "</form>" +
                         "</div>";
-
-
-                questionId = Math.toIntExact(question.getId());
-                questionText = question.getQuestionText();
-                this.questionId = questionId;
-                System.out.println("Question ID: " + questionId);
-                System.out.println("Question text: " + questionText);
-                System.out.println("Question ID fra FIELD: " + this.questionId);
-                
             }
-            
-
-         
-
             writeOk200Response(clientSocket, messageBody, "text/html");
+
+        } else if (fileTarget.equals("/api/answer")) {
+            Map<String, String> queryMap = HttpMessage.parseRequestParameters(httpMessage.messageBody);
+            int alternativeId = Integer.parseInt(queryMap.get("answerInput"));
+            System.out.println("SVAR: Alternativ ID: " + alternativeId);
+            String[] alternativeArray = String.valueOf(alternativeDao.retrieve(alternativeId)).split("'");
+            System.out.println("Alternative retrieve: " + alternativeDao.retrieve(alternativeId));
+            System.out.println(alternativeArray[3]);
+
+            Answer answer = new Answer();
+            answer.setAlternativeId(Long.valueOf(alternativeId));
+            System.out.println("Alternativ ID satt");
+            answer.setQuestionId(Long.valueOf(alternativeArray[3]));
+            System.out.println("Question ID satt til: " + Long.valueOf(alternativeArray[3]));
+            answer.setUserId(Long.valueOf(this.userId));
+            System.out.println("Bruker ID satt");
+            AnswerDao answerDao = new AnswerDao(SurveyManager.createDataSource());
+            answerDao.save(answer);
+
+            writeOk303Response(clientSocket, "Answer submitted!", "text/html", "/answerSurvey.html");
         }
 
         InputStream fileResource = getClass().getResourceAsStream(fileTarget);
