@@ -1,6 +1,7 @@
 package no.kristiania.http;
 
 import no.kristiania.jdbc.AlternativeDao;
+import no.kristiania.jdbc.AnswerDao;
 import no.kristiania.jdbc.QuestionDao;
 import no.kristiania.jdbc.SurveyDao;
 import org.flywaydb.core.Flyway;
@@ -22,6 +23,7 @@ public class SurveyManager {
         SurveyDao surveyDao = new SurveyDao(dataSource);
         QuestionDao questionDao = new QuestionDao(dataSource);
         AlternativeDao alternativeDao = new AlternativeDao(dataSource);
+        AnswerDao answerDao = new AnswerDao(dataSource);
 
         //createSurvey.html
         httpServer.addController("/api/addSurvey", new AddSurveyController(surveyDao));  //TODO: Add new survey
@@ -42,6 +44,14 @@ public class SurveyManager {
         httpServer.addController("/api/deleteQuestion", new DeleteQuestionController(questionDao, alternativeDao)); //TODO Delete existing question
         httpServer.addController("/api/listAlternativesInEdit", new ListAlternativesInEditController(alternativeDao)); //TODO: List all alternatives belonging to a question
         httpServer.addController("/api/editAlternative", new EditAlternativeController(alternativeDao)); //TODO: Edit existing alternative
+
+        //listAllAnsweredSurveys.html
+        //httpServer.addController("/api/selectAnsweredSurveys", new SelectAnsweredSurveys(surveyDao)); //TODO: Gets surveyId
+        httpServer.addController("/api/listAllQuestionsBySurveyId", new ListAllQuestionsBySurveyId(questionDao)); //TODO: List all questions by surveyID
+        httpServer.addController("/api/selectAnsweredQuestion", new SelectAnsweredQuestion(questionDao));
+        httpServer.addController("/api/listAllAnswers", new ListAllAnswers(answerDao));
+        httpServer.addController("/api/selectedQuestion", new SelectedQuestion());
+
 
         httpServer.setSurveyDao(new SurveyDao(dataSource));
         httpServer.setQuestionDao(new QuestionDao(dataSource));

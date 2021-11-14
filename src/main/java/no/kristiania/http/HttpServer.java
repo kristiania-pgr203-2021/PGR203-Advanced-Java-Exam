@@ -31,6 +31,10 @@ public class HttpServer {
     private long questionId;
     private AnswerDao answerdao;
 
+    public Integer getSurveyId() {
+        return surveyId;
+    }
+
     public Survey getSurvey() {
         return survey;
     }
@@ -191,9 +195,11 @@ public class HttpServer {
 
             writeOk303Response(clientSocket, "Answer submitted!", "text/html", "/answerSurvey.html");
 
-        } else if(fileTarget.equals("/api/selectAnsweredSurveys")) {
+        }
 
-            String location = "/listAnsweredQuestions.html";
+        else if(fileTarget.equals("/api/selectAnsweredSurveys")) {
+
+            String location = "/listAnsweredQuestions.html";                      //TODO: !!!!IKKE FERDIG!!!!
             Map<String, String> queryMap = HttpMessage.parseRequestParameters(httpMessage.messageBody);
             String surveyId = queryMap.get("surveyName");
 
@@ -207,7 +213,9 @@ public class HttpServer {
 
             writeOk303Response(clientSocket, surveyId, "text/html", location);
 
-        }  if (fileTarget.equals("/api/listAllQuestionsBySurveyId")){
+        }
+
+        if (fileTarget.equals("/api/listAllQuestionsBySurveyId")){                       //TODO: !!!!refactored!!!!
             String messageBody = "";
 
             for (Question question : questionDao.listQuestionsBySurveyId(surveyId)) {
@@ -219,7 +227,7 @@ public class HttpServer {
             System.out.println("This is messagebody (HTML): " + messageBody);
             writeOk200Response(clientSocket, messageBody, "text/html");
 
-        } else if(fileTarget.equals("/api/selectAnsweredQuestion")) {
+        } else if(fileTarget.equals("/api/selectAnsweredQuestion")) {                  //TODO: !!!!! Ikke helt ferdig!!!!!
 
             String location = "/listAnsweredQuestions.html";
             Map<String, String> queryMap = HttpMessage.parseRequestParameters(httpMessage.messageBody);
@@ -235,7 +243,7 @@ public class HttpServer {
 
             writeOk303Response(clientSocket,questionId, "text/html", location);
 
-        } else if (fileTarget.equals("/api/listAllAnswers")){
+        } else if (fileTarget.equals("/api/listAllAnswers")){                       //TODO: !!!! refactored !!!!
             AnswerDao answerDao = new AnswerDao(SurveyManager.createDataSource());
             System.out.println("Dette er survey id: "+surveyId);
             System.out.println("Dette er en question id"+questionId);
@@ -247,7 +255,7 @@ public class HttpServer {
         }
             writeOk200Response(clientSocket, responseTxt, "text/html");
 
-        } else if (fileTarget.equals("/api/selectedQuestion")) {
+        } else if (fileTarget.equals("/api/selectedQuestion")) {                    //TODO: !!! DU ER HER NÅ !!!
             QuestionDao questionDao = new QuestionDao(SurveyManager.createDataSource());
             System.out.println("DENNE IDEN ØNSKER DU Å SE!" + questionId);
 
