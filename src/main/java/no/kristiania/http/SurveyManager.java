@@ -42,6 +42,7 @@ public class SurveyManager {
         httpServer.addController("/api/deleteQuestion", new DeleteQuestionController(questionDao, alternativeDao)); //TODO Delete existing question
         httpServer.addController("/api/listAlternativesInEdit", new ListAlternativesInEditController(alternativeDao)); //TODO: List all alternatives belonging to a question
         httpServer.addController("/api/editAlternative", new EditAlternativeController(alternativeDao)); //TODO: Edit existing alternative
+        httpServer.addController("/api/deleteAlternative", new DeleteAlternativeController(alternativeDao)); //TODO: Dele existing alternative
 
         httpServer.setSurveyDao(new SurveyDao(dataSource));
         httpServer.setQuestionDao(new QuestionDao(dataSource));
