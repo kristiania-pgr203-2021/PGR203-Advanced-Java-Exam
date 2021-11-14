@@ -153,22 +153,22 @@ public class HttpServer {
                 messageBody +=
                         "<div class=\"white_div\">" +
                                 "<h2>Question ID: " + question.getId() + ", Tekst: " + question.getQuestionText() +"</h2>" +
-                                "<form action=\"api/answer\" method=\"POSt\" accept-charset=\"UTF-8\">";
+                                "<form action=\"api/answer\" method=\"POST\" accept-charset=\"UTF-8\">";
 
                 /** Looper ut alle alternativene og bygger messageBody **/
                 int alternativeIds = 0;
                 String alternativeText= "";
                 for (Alternative alternative : alternativeDao.listAlternativesByQuestionId(question.getId())){
-                    //alternativeQuestionMap.put(alternativeIds, Math.toIntExact(question.getId()));
-                    alternativeIds = Math.toIntExact(alternative.getQuestionId());
+                    alternativeIds = Math.toIntExact(alternative.getId());
                     alternativeText = alternative.getAlternative();
-                    messageBody += "<p><label><input type=\"radio\" name=\"answerInput\" value=\"" + alternativeIds + "\">" + alternativeText +"</label></p>";
+                    messageBody += "<p><label><input type=\"radio\" name=\"answerInput\" value=\"" + (alternativeIds) + "\">" + alternativeText +"</label></p>";
                 }
 
                 /** Avsluttende tag på messageBody**/
                 messageBody += "<button>Submit</button>" +
                         "</form>" +
                         "</div>";
+                System.out.println(messageBody);
             }
             writeOk200Response(clientSocket, messageBody, "text/html");
 
@@ -182,11 +182,11 @@ public class HttpServer {
 
             Answer answer = new Answer();
             answer.setAlternativeId(Long.valueOf(alternativeId));
-            System.out.println("Alternativ ID satt");
+            System.out.println("Alternativ ID satt: " + Long.valueOf(alternativeId));
             answer.setQuestionId(Long.valueOf(alternativeArray[3]));
             System.out.println("Question ID satt til: " + Long.valueOf(alternativeArray[3]));
             answer.setUserId(Long.valueOf(this.userId));
-            System.out.println("Bruker ID satt");
+            System.out.println("Bruker ID satt: " + Long.valueOf(this.userId));
             AnswerDao answerDao = new AnswerDao(SurveyManager.createDataSource());
             answerDao.save(answer);
 
@@ -208,6 +208,11 @@ public class HttpServer {
 
             if (requestTarget.endsWith(".css")) {
                 contentType = "text/css; charset=utf-8";
+                writeOk200Response(clientSocket, responseText, contentType);
+            }
+
+            if (requestTarget.endsWith(".ico")) {
+                contentType = "text/plain";
                 writeOk200Response(clientSocket, responseText, contentType);
             }
 
