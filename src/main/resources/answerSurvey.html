@@ -10,29 +10,15 @@
 <main>
 
     <div class="white_div">
-        <p>Her kommer User</p>
-        <div id="listUserAndSurvey"></div>
-
         <div id="selectedSurvey"></div>
+        <div id="getUser"></div>
+        <div id="listUserAndSurvey"></div>
     </div>
 
-    <div class="white_div">
-        <div id="listQuestions"></div>
-    </div>
+    <div id="listQuestions"></div><br>
 
-    <div class="white_div">
-        <form action="">
-            <h1>Her kommer spørsmål</h1>
-            <p><label><input type="radio" name="alternative">Alternative 1</label></p>
-            <p><label><input type="radio" name="alternative">Alternative 2</label></p>
-            <p></p><label><input type="radio" name="alternative">Alternative 3</label></p>
-            <button>Submit</button>
-        </form>
-    </div>
+    <button><a href="index.html">Return to front page</a></button>
 
-    <div>
-        <button><a href="index.html">Return to front page</a></button>
-    </div>
 </main>
 </body>
 
@@ -47,11 +33,11 @@
         document.getElementById("selectedSurvey").innerHTML = text;
     });
 
-    fetch("/api/listUserAndSurvey")
+    fetch("/api/getUser")
         .then(function(response) {
             return response.text();
         }).then(function(text) {
-        document.getElementById("listUserAndSurvey").innerHTML = text;
+        document.getElementById("getUser").innerHTML = text;
     });
     fetch("/api/listQuestionsInAnswerSurvey")
         .then(function(response) {

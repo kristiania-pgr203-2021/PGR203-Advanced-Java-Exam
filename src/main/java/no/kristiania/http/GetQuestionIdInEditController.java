@@ -13,7 +13,7 @@ public class GetQuestionIdInEditController implements HttpController {
         Map<String, String> queryMap = HttpMessage.parseRequestParameters(request.messageBody);
         int id = Integer.parseInt(queryMap.get("questionInput"));
         this.questionId = id;
-        return new HttpMessage("303 See Other", "/editSurvey.html", "Get question ID");
+        return new HttpMessage("303 See Other", "/editSurvey.html", "Fetch question ID");
     }
 
     public static int getQuestionId() {

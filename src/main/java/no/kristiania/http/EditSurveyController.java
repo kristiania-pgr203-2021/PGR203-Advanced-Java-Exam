@@ -17,13 +17,10 @@ public class EditSurveyController implements HttpController {
 
     @Override
     public HttpMessage handle(HttpMessage request) throws SQLException, IOException {
-        System.out.println("Parse");
         Map<String, String> queryMap = HttpMessage.parseRequestParameters(request.messageBody);
         Long id = Long.valueOf(queryMap.get("surveyIdInput"));
-        String name = queryMap.get("surveyNameInput");
-
-        surveyDao.update(id, name);
-
-        return new HttpMessage("303 See Other", "/editSurvey.html", "Its done");
+        String surveyName = queryMap.get("surveyNameInput");
+        surveyDao.update(id, surveyName);
+        return new HttpMessage("303 See Other", "/editSurvey.html", "Survey title edited!");
     }
 }

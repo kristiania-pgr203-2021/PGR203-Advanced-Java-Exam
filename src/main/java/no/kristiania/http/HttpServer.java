@@ -2,6 +2,7 @@ package no.kristiania.http;
 
 import no.kristiania.jdbc.*;
 
+import javax.sql.DataSource;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,18 +14,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static no.kristiania.http.UrlEncoding.decodeValue;
+import static no.kristiania.http.UrlEncoding.utf8Value;
 
 public class HttpServer {
     private static ServerSocket serverSocket;
     private SurveyDao surveyDao;
     private QuestionDao questionDao;
     private AlternativeDao alternativeDao;
+    private UserDao userDao;
     private Survey survey;
     private Question question;
     private Alternative alternative;
     private HashMap<Integer, String> mapSurvey = new HashMap();
     private HashMap<String, HttpController> controllers = new HashMap<>();
     private Integer surveyId;
+    private User user;
+    private Integer userId;
+    private long questionId;
 
     public Survey getSurvey() {
         return survey;
@@ -105,70 +111,78 @@ public class HttpServer {
             writeOk303Response(clientSocket, surveyId, "text/html", location);
 
         } else if (fileTarget.equals("/api/selectedSurvey")) {
-            System.out.println("Hentet fra field og skrives ut på addUser: " + mapSurvey.get(this.surveyId));
+            System.out.println("Survey tittel som skrives ut: " + mapSurvey.get(this.surveyId));
             String messageBody = "";
             messageBody += "<h1>" + mapSurvey.get(this.surveyId) + "</h1>";
             writeOk200Response(clientSocket, messageBody, "text/html");
 
         } else if (requestTarget.equals("/api/userForm")) {
-            String location = "/answerSurvey.html";
             Map<String, String> queryMap = HttpMessage.parseRequestParameters(httpMessage.messageBody);
             String firstName = decodeValue(queryMap.get("firstName"));
             String lastName = decodeValue(queryMap.get("lastName"));
             String email = decodeValue(queryMap.get("email"));
-            System.out.println("First name: " + firstName + " last name: " + lastName + " email: " + email);
 
-            writeOk303Response(clientSocket, "Personal information submitted!", "text/html", location);
+            User user = new User();
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setEmail(email);
+            UserDao userDao = new UserDao(SurveyManager.createDataSource());
+            userDao.save(user);
+            System.out.println("Henter ut bruker ID og navn: " + user.getId() + ", " + user.getFirstName());
+            mapSurvey.put(Math.toIntExact(user.getId()), user.getFirstName());
+            this.userId = Math.toIntExact(user.getId());
+
+            System.out.println("userForm post request inn i databasen: \rFirst name: " + firstName + " last name: " + lastName + " email: " + email);
+            writeOk303Response(clientSocket, "Personal information submitted!", "text/html", "/answerSurvey.html");
+
+        } else if (requestTarget.equals("/api/getUser")) {
+            System.out.println("Brukernavnet som skal skrives ut: " + mapSurvey.get(this.userId));
+            String messageBody = "";
+            messageBody += "<p>" + mapSurvey.get(this.userId) + "</p>";
+            writeOk200Response(clientSocket, messageBody, "text/html");
+
         } else if (requestTarget.equals("/api/listQuestionsInAnswerSurvey")) {
+            String messageBody = "";
+            System.out.println("Survey ID som vi henter ned: " + this.surveyId);
 
-
-
-
-            /*
+            /** Lister ut alle spørsmål tilhørende en survey **/
             int questionId = 0;
-            for (Question question: questionDao.listQuestionsBySurveyId(surveyId)){
-                messageBody +=
+            String questionText = "";
+            for (Question question : questionDao.listQuestionsBySurveyId(this.surveyId)) {
+                //this.questionId = question.getId();
 
-                        "<div class=\"white_div\">   \n" +
-                        "        <form action=\"\">\n" +
-                        "            <h1>"+ question.getQuestionText() +"</h1>\n" +
-                        "            <p><label><input type=\"radio\" name=\"alternative\">Alternative 1</label></p>\n" +
-                        "            <p><label><input type=\"radio\" name=\"alternative\">Alternative 2</label></p>\n" +
-                        "            <p></p><label><input type=\"radio\" name=\"alternative\">Alternative 3</label></p>\n" +
-                        "            <button>Submit</button>\n" +
-                        "        </form>\n" +
+                /** Starten på messageBody **/
+                messageBody +=
+                        "<div class=\"white_div\">" +
+                                "<h2>Question ID: " + question.getId() + ", Tekst: " + question.getQuestionText() +"</h2>" +
+                                "<form action=\"api/answer\" method=\"POSt\" accept-charset=\"UTF-8\">";
+
+                int alternativeIds = 0;
+                String alternativeText= "";
+                /** Looper ut alle alternativene og bygger messageBody **/
+                for (Alternative alternative : alternativeDao.listAlternativesByQuestionId(question.getId())){
+                    alternativeIds = Math.toIntExact(alternative.getQuestionId());
+                    alternativeText = alternative.getAlternative();
+                    messageBody += "<p><label><input type=\"radio\" name=\"answerInput\">" + alternativeText +"</label></p>";
+                }
+
+                /** Avsluttende tag på messageBody**/
+                messageBody += "<button>Submit</button>" +
+                        "</form>" +
                         "</div>";
 
-            }
-            */
-            int alternativeIds = 0;
-            String alternativeText= "";
-            int surveyId = 0;
-            for (Alternative alternative : alternativeDao.listAll()){
-                alternativeIds = Math.toIntExact(alternative.getQuestionId());
-                alternativeText = alternative
-                System.out.println("Alternativ ID: " + alternativeIds);
-                System.out.println("Alternativ tekst: " + alternativeText + "\r");
-            }
-            for (Question question: questionDao.listAll()){
-                question.getId();
-            }
 
-            String messageBody = "";
-            for (Question question: questionDao.listQuestionsBySurveyId(surveyId)){
-                messageBody += "Dette er question tekst: " +question.getQuestionText() + "Dette er alternative ID: " + alternativeIds +
-                        "<div class=\"white_div\">   \n" +
-                                "        <form action=\"\">\n" +
-                                "            <h1>"+ question.getQuestionText() +"</h1>\n" +
-                                "            <p><label><input type=\"radio\" name=\"alternative\">" + ""  + "</label></p>\n" +
-                                "            <p><label><input type=\"radio\" name=\"alternative\">" + "" + "</p>\n" +
-                                "            <p></p><label><input type=\"radio\" name=\"alternative\">" + "" +"</label></p>\n" +
-                                "            <button>Submit</button>\n" +
-                                "        </form>\n" +
-                                "</div>";
-
+                questionId = Math.toIntExact(question.getId());
+                questionText = question.getQuestionText();
+                this.questionId = questionId;
+                System.out.println("Question ID: " + questionId);
+                System.out.println("Question text: " + questionText);
+                System.out.println("Question ID fra FIELD: " + this.questionId);
+                
             }
+            
 
+         
 
             writeOk200Response(clientSocket, messageBody, "text/html");
         }
@@ -242,6 +256,10 @@ public class HttpServer {
 
     public void setAlternativeDao(AlternativeDao alternativeDao) {
         this.alternativeDao = alternativeDao;
+    }
+
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
     }
 
     public void addController(String path, HttpController controller) {
