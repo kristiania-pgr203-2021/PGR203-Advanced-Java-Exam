@@ -510,7 +510,7 @@ public class HttpServerTest {
     @Test
     void shouldSaveUserAndShowUserInNextPage() throws IOException {
         server.addController("/api/userForm", new UserFormController(userDao));
-        server.addController("/api/getUser", new GetUserController(userDao));
+        server.addController("/api/getUser", new GetUserController());
 
         HttpPostClient postClient = new HttpPostClient(
                 "localhost",
