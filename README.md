@@ -2,6 +2,8 @@
 
 [![ExamBuild](https://github.com/kristiania-pgr203-2021/pgr203-exam-Neutix/actions/workflows/maven.yml/badge.svg?branch=master)](https://github.com/kristiania-pgr203-2021/pgr203-exam-Neutix/actions/workflows/maven.yml)
 
+[![build](https://github.com/kristiania-pgr203-2021/pgr203-exam-Neutix/actions/workflows/build.yml/badge.svg)](https://github.com/kristiania-pgr203-2021/pgr203-exam-Neutix/actions/workflows/build.yml)
+
 
 ## Beskriv hvordan programmet skal testes:
 

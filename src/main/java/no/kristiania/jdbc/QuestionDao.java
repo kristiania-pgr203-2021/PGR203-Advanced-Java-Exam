@@ -45,7 +45,7 @@ public class QuestionDao {
         }
     }
 
-    public void update(Long id, String questionName) throws SQLException {
+    public void update(long id, String questionName) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("update questions set question = ? where id = ?")) {
                 statement.setString(1, questionName);
