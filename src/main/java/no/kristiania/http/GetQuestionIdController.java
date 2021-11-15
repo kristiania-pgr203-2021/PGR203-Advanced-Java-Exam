@@ -13,7 +13,8 @@ public class GetQuestionIdController implements HttpController {
         if (questionInput != 0) {
             this.questionId = questionInput;
         }
-        return new HttpMessage("303 See Other", "/createSurvey.html", "Its done");
+
+        return new HttpMessage("303 See Other", "/createSurvey.html", "Fetch question ID");
     }
 
     public static long getQuestionId() {

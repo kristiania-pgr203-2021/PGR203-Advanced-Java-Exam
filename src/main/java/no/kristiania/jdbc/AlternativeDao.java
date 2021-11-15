@@ -87,6 +87,21 @@ public class AlternativeDao {
         }
     }
 
+    public ArrayList<Alternative> listAll() throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("select * from alternatives")) {
+                try (ResultSet rs = statement.executeQuery()) {
+                    ArrayList<Alternative> result = new ArrayList<>();
+
+                    while (rs.next()) {
+                        result.add(resultFromResultSet(rs));
+                    }
+                    return result;
+                }
+            }
+        }
+    }
+
     private Alternative resultFromResultSet(ResultSet rs) throws SQLException {
         Alternative alternative = new Alternative();
         alternative.setId(rs.getLong("id"));

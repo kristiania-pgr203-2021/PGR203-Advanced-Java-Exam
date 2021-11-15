@@ -8,37 +8,41 @@
 
 <body>
 <main>
-    <h1>*SURVEY NAME HERE*</h1>
-
-    <form id="form">
-        <label><input type="radio" name="alternative">Alternative 1</label>
-        <label><input type="radio" name="alternative">Alternative 2</label>
-        <label><input type="radio" name="alternative">Alternative 3</label>
-    </form>
-
-    <form id="form2">
-        <label><input type="range" name="alternative">Alternative 1</label>
-        <label><input type="range" name="alternative">Alternative 2</label>
-        <label><input type="range" name="alternative">Alternative 3</label>
-    </form>
-
-    <form method="POST" action="/api/tasks">
-        <label>Question: <select id="questions" name="questions"/></label>
-        <label>Your answer: <input type="text" name="option "/></label>
-        <button>Add</button>
-    </form>
-    <div>
-        <a href="index.html">Return to front page</a>
+    <div class="white_div">
+        <div id="selectedSurvey"></div>
+        <div id="getUser"></div>
+        <div id="listUserAndSurvey"></div>
     </div>
+
+    <div id="listQuestions"></div><br>
+
+    <button><a href="index.html">Return to front page</a></button>
 </main>
 </body>
 
 <script>
-    fetch("/api/questionOptions")
+
+    /************* Det serveren skriver/ sender ut til bruker *************/
+
+    fetch("/api/selectedSurvey")
         .then(function(response) {
             return response.text();
         }).then(function(text) {
-        document.getElementById("questions").innerHTML = text;
+        document.getElementById("selectedSurvey").innerHTML = text;
     });
+
+    fetch("/api/getUser")
+        .then(function(response) {
+            return response.text();
+        }).then(function(text) {
+        document.getElementById("getUser").innerHTML = text;
+    });
+    fetch("/api/listQuestionsInAnswerSurvey")
+        .then(function(response) {
+            return response.text();
+        }).then(function(text) {
+        document.getElementById("listQuestions").innerHTML = text;
+    });
+
 </script>
 </html>

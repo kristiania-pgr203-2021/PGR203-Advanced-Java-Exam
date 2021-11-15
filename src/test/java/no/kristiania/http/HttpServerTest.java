@@ -1,9 +1,6 @@
 package no.kristiania.http;
 
-import no.kristiania.jdbc.AlternativeDao;
-import no.kristiania.jdbc.QuestionDao;
-import no.kristiania.jdbc.SurveyDao;
-import no.kristiania.jdbc.TestData;
+import no.kristiania.jdbc.*;
 
 import org.junit.jupiter.api.Test;
 
@@ -20,6 +17,8 @@ public class HttpServerTest {
     SurveyDao surveyDao = new SurveyDao(TestData.testDataSource());
     QuestionDao questionDao = new QuestionDao(TestData.testDataSource());
     AlternativeDao alternativeDao = new AlternativeDao(TestData.testDataSource());
+    UserDao userDao = new UserDao(TestData.testDataSource());
+    AnswerDao answerDao = new AnswerDao(TestData.testDataSource());
 
     HttpServerTest() throws IOException {
     }
@@ -37,7 +36,7 @@ public class HttpServerTest {
     }
 
     @Test
-    void shouldRespondWithRequestTarget200() throws IOException{
+    void shouldRespondWithRequestTarget200() throws IOException {
         HttpClient client = new HttpClient("localhost", server.getPort(), "/index.html");
         assertEquals(200, client.getStatusCode());
     }
@@ -92,8 +91,11 @@ public class HttpServerTest {
         assertTrue(client2.getMessageBody().endsWith("New Question</p>"));
     }
 
-    /** This test can either pass by running all test suits at the same time, or it can only pass when
-     * runs by itself. Thats because of the data from in-memory database **/
+    /**
+     * This test can either pass by running all test suits at the same time, or it can only pass when
+     * runs by itself. Thats because of the data from in-memory database
+     **/
+
     @Test
     void shouldPostAndGetNewAlternative() throws IOException {
         server.addController("/api/addSurvey", new AddSurveyController(surveyDao));
@@ -168,22 +170,24 @@ public class HttpServerTest {
                 "localhost",
                 server.getPort(),
                 "/api/addSurvey",
-                "surveyInput=List+All+Surveys+Test");
+
+                "surveyInput=List+Survey");
         assertEquals(303, postClient1.getStatusCode());
 
         HttpPostClient postClient2 = new HttpPostClient(
                 "localhost",
                 server.getPort(),
                 "/api/editSurvey",
-                "surveyIdInput=1&surveyNameInput=Edited+Survey");
+
+                "surveyIdInput=1&surveyNameInput=List+Survey");
         assertEquals(303, postClient2.getStatusCode());
 
         HttpClient client = new HttpClient("localhost", server.getPort(), "/api/listSurveys");
-        assertThat(client.getMessageBody()).containsAnyOf("Edited Survey</p>");
+        assertThat(client.getMessageBody()).containsAnyOf("List Survey</p>");
     }
 
     @Test
-    void shouldDeleteSurvey() throws IOException{
+    void shouldDeleteSurvey() throws IOException {
         server.addController("/api/addSurvey", new AddSurveyController(surveyDao));
         server.addController("/api/deleteSurvey", new DeleteSurveyController(surveyDao, questionDao, alternativeDao));
         server.addController("/api/listSurveys", new ListSurveysController(surveyDao));
@@ -298,10 +302,12 @@ public class HttpServerTest {
         assertThat(client2.getMessageBody()).doesNotContain("Question Should Be Deleted");
     }
 
-    /** This test can either pass by running all test suits at the same time, or it can only pass when
-     * runs by itself. Thats because of the data from in-memory database **/
+    /**
+     * This test can either pass by running all test suits at the same time, or it can only pass when
+     * runs by itself. Thats because of the data from in-memory database
+     **/
     @Test
-    void ShouldListAllAlternatives() throws IOException{
+    void ShouldListAllAlternatives() throws IOException {
         server.addController("/api/addSurvey", new AddSurveyController(surveyDao));
         server.addController("/api/getSurvey", new GetSurveyController(surveyDao));
         server.addController("/api/addQuestion", new AddQuestionController(questionDao));
@@ -339,11 +345,16 @@ public class HttpServerTest {
         HttpClient client3 = new HttpClient("localhost", server.getPort(), "/api/listAlternativesInEdit");
 
         assertTrue(client3.getMessageBody().endsWith("Yes</p>"));
+
     }
 
     //TODO: Husk å skrive dette inn på readme
-    /** This test can either pass by running all test suits at the same time, or it can only pass when
-     * runs by itself. Thats because of the data from in-memory database **/
+
+    /**
+     * This test can either pass by running all test suits at the same time, or it can only pass when
+     * runs by itself. Thats because of the data from in-memory database
+     **/
+
     @Test
     void ShouldEditAlternative() throws IOException {
         server.addController("/api/addSurvey", new AddSurveyController(surveyDao));
@@ -446,6 +457,92 @@ public class HttpServerTest {
                 "/api/deleteAlternative",
                 "alternativeInput=1");
         assertEquals(303, postDeleteAlternative.getStatusCode());
+    }
+
+
+    @Test
+    void shouldListAddedSurvey() throws IOException {
+        server.addController("/api/addSurvey", new AddSurveyController(surveyDao));
+        server.addController("/api/getSurvey", new GetSurveyController(surveyDao));
+        server.addController("/api/listSurveysForm", new ListSurveysFormController(surveyDao));
+        server.addController("/api/joinSurvey", new JoinSurveyController(surveyDao));
+        server.addController("/api/selectedSurvey", new SelectedSurveyController());
+
+        HttpPostClient postClient = new HttpPostClient(
+                "localhost",
+                server.getPort(),
+                "/api/addSurvey",
+                "surveyInput=List+Survey");
+        assertEquals(303, postClient.getStatusCode());
+        HttpClient client = new HttpClient("localhost", server.getPort(), "/api/listSurveysForm");
+        //assertTrue(client.getMessageBody().startsWith("<option value=1>ID: 1 List Survey"));
+        System.out.println(client.getMessageBody());
+    }
+
+    @Test
+    void shouldJoinSurveyAndShowJoinedSurveyInNextPage() throws IOException {
+        server.addController("/api/addSurvey", new AddSurveyController(surveyDao));
+        server.addController("/api/getSurvey", new GetSurveyController(surveyDao));
+        server.addController("/api/listSurveysForm", new ListSurveysFormController(surveyDao));
+        server.addController("/api/joinSurvey", new JoinSurveyController(surveyDao));
+        server.addController("/api/selectedSurvey", new SelectedSurveyController());                //TODO: DU ER HER !!!!!!
+
+        HttpPostClient postClient = new HttpPostClient(
+                "localhost",
+                server.getPort(),
+                "/api/addSurvey",
+                "surveyInput=List+Survey");
+        assertEquals(303, postClient.getStatusCode());
+        HttpClient client = new HttpClient("localhost", server.getPort(), "/api/listSurveysForm");
+
+        assertTrue(client.getMessageBody().endsWith("List Survey</option>"));
+
+        HttpPostClient postClient1 = new HttpPostClient(
+                "localhost",
+                server.getPort(),
+                "/api/joinSurvey",
+                "surveyName=1"
+        );
+        assertEquals(303, postClient1.getStatusCode());
+        HttpClient client2 = new HttpClient("localhost", server.getPort(), "/api/selectedSurvey");
+        assertThat(client2.getMessageBody()).containsAnyOf("<h1>New Survey</h1>", "<h1>List Survey</h1>");
+
+        //<h1>New Survey</h1>
+        //<h1>List Survey</h1>
+
+    }
+
+    @Test
+    void shouldSaveUserAndShowUserInNextPage() throws IOException {
+        server.addController("/api/userForm", new UserFormController(userDao));
+        server.addController("/api/getUser", new GetUserController());
+
+        HttpPostClient postClient = new HttpPostClient(
+                "localhost",
+                server.getPort(),
+                "/api/userForm",
+                "firstName=Ola&lastName=Nordmann&email=test%40hotmail.com");
+        assertEquals(303, postClient.getStatusCode());
+        HttpClient client = new HttpClient("localhost", server.getPort(), "/api/getUser");
+        assertTrue(client.getMessageBody().contains("Ola"));
+    }
+
+    @Test
+    void shouldListQuestionsAndAlternativeAndSaveAsAnswer() {
+        server.addController("/api/listQuestionsInAnswerSurvey", new ListQuestionsAndAlternativesController(questionDao, alternativeDao));
+        server.addController("/api/answer", new AnswerController(alternativeDao, answerDao));
+
+
+    }
+
+    @Test
+    void shouldListAllQuestionBySurveyId() {
+        server.addController("/api/listAllQuestionsBySurveyIdForAnswers", new ListAllQuestionsBySurveyId(questionDao));
+    }
+
+    @Test
+    void shouldGetSurveyNameFromList() {
+        server.addController("/api/selectAnsweredSurveys", new SelectAnsweredSurveys(surveyDao));
     }
 }
 

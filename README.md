@@ -16,6 +16,14 @@
 
 ## Sjekkliste
 
+### Arbeidsform:
+* Utvikling av dette eksamensprosjektet benyttet vi oss av verktøy som "Code With Me". Det er en plugin som brukes via Intelliji, slik at
+* begge parter kan kode live. 
+
+### Ekstra leveranse:
+* Programmet kan slette eksisterende spørreundersøkelse, spørsmål og alternativ. Dersom en spørreundersøkelse blir slettet, slettes alt som
+følger med også (tilhørende spørsmål + alternativ). Dette gjelder ved sletting av spørsmål også. 
+
 ## Vedlegg: Sjekkliste for innlevering
 
 * [ ] Dere har lest eksamensteksten
@@ -25,7 +33,7 @@
 
 ### README.md
 
-* [ ] `README.md` inneholder en korrekt link til Github Actions
+* [x] `README.md` inneholder en korrekt link til Github Actions
 * [ ] `README.md` beskriver prosjektets funksjonalitet, hvordan man bygger det og hvordan man kjører det
 * [ ] `README.md` beskriver eventuell ekstra leveranse utover minimum
 * [ ] `README.md` inneholder et diagram som viser datamodellen
@@ -69,11 +77,13 @@
 * [ ] Databasene skal ikke kunne være null
 * [x] Fikse jallaknappen AKA refresh
 * [ ] Test coverage
-* [ ] Bedre navngivning
+* [x] Bedre navngivning
 * [ ] Bedre feilhåndtering
 * [ ] Endre måten daoene lagrer fra input slik at det ikke lagres blank / null til databasen, men at det da heller sendes en 400 request error.(Eksempel kode under)
 * [x] Fikse Jar URL encode/decode       
 * [ ] EditSurvey lagrer gjeldende survey ID for endringer. Uten å måtte spesifisere ID hver gang
+* [ ] Github actions kjører rødt 
+
 
 
                     eksempel: if (person.getFirstName()= null || person.getFirstName().isBlank()){

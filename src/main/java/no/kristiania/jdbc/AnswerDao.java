@@ -30,7 +30,7 @@ public class AnswerDao {
         }
     }
 
-    public List<Answer> listAnswersByQuestionId(long questionId) throws SQLException {
+    public List<Answer> listAnswersByQuestionId(int questionId) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(
                     "select * from answers where question_id = ?")) {
@@ -59,6 +59,38 @@ public class AnswerDao {
                     return resultFromResultSet(rs);
                 }
             }
+        }
+    }
+
+    public ArrayList<FullAnswer> retrieveFullAnswer(long surveyId, long questionId) throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(
+                    "select questions.question, Alternatives.alternative, Users.first_name, Users.last_name, Users.email\n" +
+                            "from Answers\n" +
+                            "inner join questions on answers.question_id = questions.id\n" +
+                            "inner join alternatives on answers.alternative_id = alternatives.id\n" +
+                            "inner join users on answers.user_id = users.id\n" +
+                            "inner join surveys on questions.survey_id = surveys.id\n" +
+                            "where survey_id = ? and answers.question_id = ?"
+            )) {
+                statement.setLong(1, surveyId);
+                statement.setLong(2,questionId);
+
+                try (ResultSet rs = statement.executeQuery()) {
+                    ArrayList<FullAnswer> answers = new ArrayList<>();
+                    while (rs.next()) {
+                        FullAnswer fullAnswer = new FullAnswer();
+                        fullAnswer.setQuestion(rs.getString("question"));
+                        fullAnswer.setAlternative(rs.getString("alternative"));
+                        fullAnswer.setFirstName(rs.getString("first_name"));
+                        fullAnswer.setLastName(rs.getString("last_name"));
+                        fullAnswer.setEmail(rs.getString("email"));
+                        answers.add(fullAnswer);
+                    }
+                    return answers;
+                }
+            }
+
         }
     }
 

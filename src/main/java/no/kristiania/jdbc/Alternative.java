@@ -34,7 +34,7 @@ public class Alternative {
         return "Alternative{" +
                 "id=" + id +
                 ", alternative='" + alternative + '\'' +
-                ", questionId=" + questionId +
+                ", questionId='" + questionId + '\'' +
                 '}';
     }
 }

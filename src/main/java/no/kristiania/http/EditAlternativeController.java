@@ -22,8 +22,8 @@ public class EditAlternativeController implements HttpController {
         Map<String, String> queryMap = HttpMessage.parseRequestParameters(request.messageBody);
         AlternativeDao dao = new AlternativeDao(SurveyManager.createDataSource());
         Long id = Long.valueOf(queryMap.get("alternativeIdInput"));
-        String name = queryMap.get("alternativeNameInput");
-        dao.update(id, decodeValue(name));
+        String alternative = queryMap.get("alternativeNameInput");
+        dao.update(id, decodeValue(alternative));
         return new HttpMessage("303 See Other", "/editSurvey.html", "Edited alternative!");
     }
 }

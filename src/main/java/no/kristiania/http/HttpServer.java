@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-
 import java.sql.SQLException;
 import java.util.HashMap;
 
@@ -16,11 +15,24 @@ public class HttpServer {
     private SurveyDao surveyDao;
     private QuestionDao questionDao;
     private AlternativeDao alternativeDao;
+    private UserDao userDao;
     private Survey survey;
     private Question question;
     private Alternative alternative;
-
+    public static HashMap<Integer, String> mapSurvey = new HashMap();
+    public static HashMap<Integer, String> mapInAnswered = new HashMap();
+    public static HashMap<Integer, String> mapUser = new HashMap();
+    private HashMap<Integer, Integer> alternativeQuestionMap = new HashMap<>();
     private HashMap<String, HttpController> controllers = new HashMap<>();
+    private Integer surveyId;
+    private User user;
+    private Integer userId;
+    private long questionId;
+    private AnswerDao answerdao;
+
+    public Integer getSurveyId() {
+        return surveyId;
+    }
 
     public Survey getSurvey() {
         return survey;
@@ -73,14 +85,16 @@ public class HttpServer {
             return;
         }
 
+
         InputStream fileResource = getClass().getResourceAsStream(fileTarget);
+
 
         if (fileResource != null) {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             fileResource.transferTo(buffer);
             String responseText = buffer.toString();
-
             String contentType = "text/plain";
+          
             if (requestTarget.endsWith(".html")) {
                 contentType = "text/html; charset=utf-8";
                 writeOk200Response(clientSocket, responseText, contentType);
@@ -88,6 +102,12 @@ public class HttpServer {
 
             if (requestTarget.endsWith(".css")) {
                 contentType = "text/css; charset=utf-8";
+                writeOk200Response(clientSocket, responseText, contentType);
+            }
+
+            if (requestTarget.endsWith(".ico")) {
+                contentType = "text/plain";
+
                 writeOk200Response(clientSocket, responseText, contentType);
             }
 
@@ -142,6 +162,14 @@ public class HttpServer {
 
     public void setAlternativeDao(AlternativeDao alternativeDao) {
         this.alternativeDao = alternativeDao;
+    }
+
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
+    }
+
+    public void setAnswerDao(AnswerDao answerdao) {
+        this.answerdao = answerdao;
     }
 
     public void addController(String path, HttpController controller) {

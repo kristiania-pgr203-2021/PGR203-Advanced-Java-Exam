@@ -20,9 +20,8 @@ public class EditQuestionController implements HttpController {
 
         Map<String, String> queryMap = HttpMessage.parseRequestParameters(request.messageBody);
         Long id = Long.valueOf(queryMap.get("questionIdInput"));
-        String name = queryMap.get("questionNameInput");
-        questionDao.update(id, decodeValue(name));
-
-        return new HttpMessage("303 See Other", "/editSurvey.html", "Its done");
+        String question = queryMap.get("questionNameInput");
+        questionDao.update(id, decodeValue(question));
+        return new HttpMessage("303 See Other", "/editSurvey.html", "Question edited!");
     }
 }

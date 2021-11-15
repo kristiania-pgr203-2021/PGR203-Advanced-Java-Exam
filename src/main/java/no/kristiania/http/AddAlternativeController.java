@@ -22,12 +22,12 @@ public class AddAlternativeController implements HttpController {
         this.alternative = new Alternative();
 
         Long id = Long.valueOf(queryMap.get("questionId"));
-        String alternativeText = decodeValue(queryMap.get("alternativeInput"));
+        String alternative = decodeValue(queryMap.get("alternativeInput"));
 
-        alternative.setAlternative(alternativeText);
-        alternative.setQuestionId(id);
-        alternativeDao.save(alternative);
+        this.alternative.setAlternative(alternative);
+        this.alternative.setQuestionId(id);
+        alternativeDao.save(this.alternative);
 
-        return new HttpMessage("303 See Other", "/createSurvey.html","it's done");
+        return new HttpMessage("303 See Other", "/createSurvey.html","Alternative added!");
     }
 }

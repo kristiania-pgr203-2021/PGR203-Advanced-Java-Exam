@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>List answered questions | Kristiania </title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+    <div class="white_div">
+        <div id="listSurveyName">Her kommer SURVEYNAME</div>
+        <h3>Select question to see all answers</h3>
+
+        <form method="POST" action="/api/selectAnsweredQuestion" accept-charset="UTF-8">
+            <p><label>Questions: <select id="listAllQuestionsBySurveyId" name="questionName"></select></label><button>Select</button></p>
+        </form>
+    </div>
+
+    <div class="white_div">
+        <div id="selectedQuestion"></div>
+        <div id="listAllAnswers"></div>
+        <button><a href="index.html">Return to front page</a></button>
+    </div>
+
+</main>
+</body>
+
+<script>
+
+    fetch("/api/selectedSurveyInListAnswered")
+        .then(function(response) {
+            return response.text();
+        }).then(function(text) {
+        document.getElementById("listSurveyName").innerHTML = text;
+    });
+    fetch("/api/listAllQuestionsBySurveyId")
+        .then(function(response) {
+            return response.text();
+        }).then(function(text) {
+        document.getElementById("listAllQuestionsBySurveyId").innerHTML = text;
+    });
+    fetch("/api/selectedQuestion")
+        .then(function(response) {
+            return response.text();
+        }).then(function(text) {
+        document.getElementById("selectedQuestion").innerHTML = text;
+    });
+    fetch("/api/listAllAnswers")
+        .then(function(response) {
+            return response.text();
+        }).then(function(text) {
+        document.getElementById("listAllAnswers").innerHTML = text;
+    });
+</script>
+
+
+
+</html>
