@@ -13,7 +13,7 @@ følger med også (tilhørende spørsmål + alternativ). Dette gjelder ved slett
 ### Bygging av programmet
 * Dette programmet gir brukeren mulighet til å opprette og svare på spørreundersøkelser. For å kjøre programmet kan man enten bruke main() i SurveyManager- klassen eller kjøre via mvn package.
 For å kunne kjøre via mvn package må brukeren trykke på tannhjul hvor det står `package` (eventuelt `clean` først dersom `target`-mappen ikke er tom). *Deretter kan brukeren skrive inn denne kommandoen på terminal: 
-`java -jar target/pgr203-exam-Neutix-1.0-SNAPSHOT.jar` eller `java -Dile.encoding=utf-8 -jar target/pgr203-exam-Neutix-1.0-SNAPSHOT.jar` for riktig encoding via jar. 
+`java -jar target/pgr203-exam-Neutix-1.0-SNAPSHOT.jar` eller `java -Dfile.encoding=utf-8 -jar target/pgr203-exam-Neutix-1.0-SNAPSHOT.jar` for riktig encoding via jar. 
 
 ### Funksjonalitet/ beskrivelse
 * På forsiden har brukeren flere valg: opprette, redigere eksisterende, svare eller se alle svar.
