@@ -13,23 +13,23 @@
     <div class="white_div">
         <div id="listSurveyName">Her kommer SURVEYNAME</div>
         <h3>Select question to see all answers</h3>
+
         <form method="POST" action="/api/selectAnsweredQuestion" accept-charset="UTF-8">
             <p><label>Questions: <select id="listAllQuestionsBySurveyId" name="questionName"></select></label><button>Select</button></p>
         </form>
-        </div>
+    </div>
 
-        <div class="white_div" id="selectedQuestion"></div>
-
-        <div class="white_div" id="listAllAnswers"></div>
-
+    <div class="white_div">
+        <div id="selectedQuestion"></div>
+        <div id="listAllAnswers"></div>
+    </div>
 
 </main>
 </body>
 
 <script>
 
-    /************* Det serveren skriver/ sender ut til bruker *************/
-    fetch("/api/selectedSurvey")
+    fetch("/api/selectedSurveyInListAnswered")
         .then(function(response) {
             return response.text();
         }).then(function(text) {

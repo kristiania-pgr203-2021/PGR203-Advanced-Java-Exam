@@ -23,6 +23,7 @@ public class HttpServer {
     private Question question;
     private Alternative alternative;
     public static HashMap<Integer, String> mapSurvey = new HashMap();
+    public static HashMap<Integer, String> mapInAnswered = new HashMap();
     public static HashMap<Integer, String> mapUser = new HashMap();
     private HashMap<Integer, Integer> alternativeQuestionMap = new HashMap<>();
     private HashMap<String, HttpController> controllers = new HashMap<>();

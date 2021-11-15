@@ -24,7 +24,7 @@ public class JoinSurveyController implements HttpController {
 
         String[] name = String.valueOf(surveyDao.retrieve(Long.parseLong(surveyId))).split("'");
         mapSurvey.put(Integer.valueOf(surveyId), name[1]);
-        this.surveyId = Integer.valueOf(surveyId);
+        JoinSurveyController.surveyId = Integer.valueOf(surveyId);
 
         return new HttpMessage("303 See Other", "/addUser.html", "Joined selected survey!");
     }

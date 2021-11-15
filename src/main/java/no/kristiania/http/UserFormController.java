@@ -34,11 +34,9 @@ public class UserFormController implements HttpController {
         user.setLastName(lastName);
         user.setEmail(email);
         userDao.save(user);
-        System.out.println("Henter ut bruker ID og navn: " + user.getId() + ", " + user.getFirstName());
         mapUser.put(Math.toIntExact(user.getId()), user.getFirstName());
-        this.userId = Math.toIntExact(user.getId());
+        userId = Math.toIntExact(user.getId());
 
-        System.out.println("userForm post request inn i databasen: \rFirst name: " + firstName + " last name: " + lastName + " email: " + email);
         return new HttpMessage("303 See Other","/answerSurvey.html", "Personal information submitted!");
     }
 

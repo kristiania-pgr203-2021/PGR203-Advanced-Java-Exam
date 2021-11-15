@@ -3,17 +3,14 @@ package no.kristiania.http;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import static no.kristiania.http.HttpServer.mapUser;
+import static no.kristiania.http.HttpServer.mapInAnswered;
 
-public class GetUserController implements HttpController {
-    public GetUserController() {
-    }
+public class SelectedSurveyInListAnswered implements HttpController {
 
     @Override
     public HttpMessage handle(HttpMessage request) throws SQLException, IOException {
         String messageBody = "";
-        messageBody += "<p>" + mapUser.get(UserFormController.getUserId()) + "</p>";
-
+        messageBody += "<h1>" + UrlEncoding.decodeValue(mapInAnswered.get(SelectAnsweredSurveys.getSurveyId())) + "</h1>";
         return new HttpMessage("200 OK", messageBody);
     }
 }
