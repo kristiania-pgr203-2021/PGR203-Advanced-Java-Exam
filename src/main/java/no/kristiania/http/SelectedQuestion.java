@@ -9,12 +9,10 @@ public class SelectedQuestion implements HttpController {
     @Override
     public HttpMessage handle(HttpMessage request) throws SQLException, IOException {
         QuestionDao questionDao = new QuestionDao(SurveyManager.createDataSource());
-        System.out.println("DENNE IDEN ØNSKER DU Å SE!" + SelectAnsweredQuestion.getQuestionId());
 
         String responseTxt = "";
         if (SelectAnsweredQuestion.getQuestionId() != 0) {
             responseTxt += "<h3>" + (questionDao.retrieve(SelectAnsweredQuestion.getQuestionId()).getQuestionText()) + "</h3>";
-            System.out.println(responseTxt);
         }
 
         return new HttpMessage("200 OK", responseTxt);

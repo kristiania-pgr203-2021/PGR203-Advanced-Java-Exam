@@ -15,8 +15,6 @@ public class UserDaoTest {
         User user = TestData.exampleUser();
         dao.save(user);
 
-        System.out.println(user);
-
         assertThat(dao.retrieve(user.getId()))
                 .hasNoNullFieldsOrProperties()
                 .usingRecursiveComparison()

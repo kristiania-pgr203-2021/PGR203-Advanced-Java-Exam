@@ -21,7 +21,6 @@ public class ListQuestionsInEditController implements HttpController {
 
         for (Question question : questionDao.listQuestionsBySurveyId(GetSurveyIdController.getSurveyId())) {
             Test += "<p>" + "ID: " + question.getId() + " " + "Question text: " + utf8Value(question.getQuestionText()) + "</p>";
-
         }
         return new HttpMessage("200 OK", Test);
     }

@@ -51,9 +51,10 @@ public class AnswerDaoTest {
         answer2.setUserId(user2.getId());
         dao.save(answer2);
 
-        System.out.println(answer1);
-        System.out.println(answer2);
-
+        assertThat(dao.retrieve(answer1.getId()))
+                .hasNoNullFieldsOrProperties()
+                .usingRecursiveComparison()
+                .isEqualTo(answer1);
 
         assertThat(dao.listAnswersByQuestionId(Math.toIntExact(question.getId())))
                 .extracting(Answer::getId)
