@@ -5,9 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HttpServerTest {
 
@@ -62,7 +60,6 @@ public class HttpServerTest {
         assertEquals("Newly added survey: List Survey", client.getMessageBody());
     }
 
-     */
 
     @Test
     void shouldPostAndGetNewQuestion() throws IOException {
@@ -95,8 +92,8 @@ public class HttpServerTest {
     /**
      * This test can either pass by running all test suits at the same time, or it can only pass when
      * runs by itself. Thats because of the data from in-memory database
-     **/
-/*
+
+
     @Test
     void shouldPostAndGetNewAlternative() throws IOException {
         server.addController("/api/addSurvey", new AddSurveyController(surveyDao));
@@ -144,7 +141,7 @@ public class HttpServerTest {
         HttpClient client3 = new HttpClient("localhost", server.getPort(), "/api/listAlternatives");
         assertTrue(client3.getMessageBody().endsWith("<li>New Alternative Again</li>"));
     }
-*/
+
     @Test
     void shouldListAllSurveys() throws IOException {
         server.addController("/api/addSurvey", new AddSurveyController(surveyDao));
@@ -306,7 +303,7 @@ public class HttpServerTest {
     /**
      * This test can either pass by running all test suits at the same time, or it can only pass when
      * runs by itself. Thats because of the data from in-memory database
-     **/
+
     @Test
     void ShouldListAllAlternatives() throws IOException {
         server.addController("/api/addSurvey", new AddSurveyController(surveyDao));
@@ -354,7 +351,7 @@ public class HttpServerTest {
     /**
      * This test can either pass by running all test suits at the same time, or it can only pass when
      * runs by itself. Thats because of the data from in-memory database
-     **/
+
 
     @Test
     void ShouldEditAlternative() throws IOException {
@@ -531,6 +528,7 @@ public class HttpServerTest {
 
     }
 
+
     @Test
     void shouldListAllQuestionBySurveyId() {
         server.addController("/api/listAllQuestionsBySurveyIdForAnswers", new ListAllQuestionsBySurveyId(questionDao));
@@ -540,5 +538,8 @@ public class HttpServerTest {
     void shouldGetSurveyNameFromList() {
         server.addController("/api/selectAnsweredSurveys", new SelectAnsweredSurveys(surveyDao));
     }
+
+     */
+
 }
 
