@@ -1,0 +1,108 @@
+@startuml
+actor Browser
+participant HttpServer
+Participant Controllers
+Participant AddSurveyController
+Participant AddQuestionController
+Participant AddAlternativeController
+Participant AddUsersController
+Participant GetSurveyController
+Participant GetAnswersController
+participant AddAnswersController
+participant SurveyDao
+participant QuestionDao
+participant AlternativeDao
+participant UserDao
+participant AnswerDao
+database SURVEY_DB
+database QUESTION_DB
+database ALTERNATIVE_DB
+database USER_DB
+database ANSWER_DB
+
+Browser -> HttpServer: POST: /api/addSurveys
+HttpServer -> Controllers: get("/api/addSurveys")
+HttpServer <- Controllers: AddSurveyController
+HttpServer -> AddSurveyController: response = handle(request)
+AddSurveyController -> AddSurveyController: survey = new Survey()
+AddSurveyController -> AddSurveyController: survey.SurveyName(req.get("surveyName"))
+AddSurveyController -> SurveyDao : save(survey)
+SurveyDao -> SURVEY_DB: INSERT INTO SURVEY .
+HttpServer <- AddSurveyController: OK 200
+HttpServer -> HttpServer: response.write(socket)
+Browser <- HttpServer: HTTP/1.1 200 OK
+
+Browser -> HttpServer: POST: /api/addQuestions
+HttpServer -> Controllers: get("/api/addQuestion")
+HttpServer <- Controllers: AddQuestionController
+HttpServer -> AddQuestionController: response = handle(request)
+AddQuestionController -> AddQuestionController: question = new Question()
+AddQuestionController -> AddQuestionController: question.questionTxt(req.get("questionTxt"))
+AddQuestionController -> QuestionDao : save(question)
+QuestionDao -> QUESTION_DB: INSERT INTO QUESTIONS .
+HttpServer <- AddQuestionController: OK 200
+HttpServer -> HttpServer: response.write(socket)
+Browser <- HttpServer: HTTP/1.1 200 OK
+
+Browser -> HttpServer: POST: /api/addAlternatives
+HttpServer -> Controllers: get("/api/addAlternatives")
+HttpServer <- Controllers: AddAlternativeController
+HttpServer -> AddAlternativeController: response = handle(request)
+AddAlternativeController -> AddQuestionController: alternative = new Alternative()
+AddAlternativeController -> AddQuestionController: alternative.alternativeTxt(req.get("alternativeTxt"))
+AddAlternativeController -> AlternativeDao : save(alternative)
+AlternativeDao -> ALTERNATIVE_DB: INSERT INTO ALTERNATIVE .
+HttpServer <- AddAlternativeController: OK 200
+HttpServer -> HttpServer: response.write(socket)
+Browser <- HttpServer: HTTP/1.1 200 OK
+
+Browser -> HttpServer: GET: /api/Survey
+HttpServer -> Controllers: get("/api/getSurvey")
+HttpServer <- Controllers: GetSurveyController
+HttpServer -> GetSurveyController: response = handle(request)
+GetSurveyController -> SurveyDao: retrieve.(surveyId)
+SurveyDao <- SURVEY_DB: SELECT FROM SURVEY WHERE ID = ? .
+SurveyDao -> GetSurveyController: survey.SurveyName
+GetSurveyController -> QuestionDao: retrieve.(questionId)
+QuestionDao <- QUESTION_DB: SELECT FROM QUESTION WHERE ID = ? .
+QuestionDao -> GetSurveyController: question.questionTxt
+GetSurveyController -> AnswerDao: retrieve.(alternativeId)
+AnswerDao <- ANSWER_DB: SELECT FROM QUESTION WHERE ID = ? .
+GetSurveyController -> GetSurveyController: retrieve.(alternative)
+GetSurveyController -> GetSurveyController: retrieve.(alternative)
+Browser -> HttpServer: POST: /api/addUser
+HttpServer -> Controllers: get("/api/addUser")
+HttpServer <- Controllers: AddUsersController
+HttpServer -> AddUsersController: response = handle(request)
+AddUsersController -> AddUsersController: user = new User();
+AddUsersController -> AddUsersController: user.firstName(req.get("firstName")
+AddUsersController -> AddUsersController: user.lastName(req.get("lastName")
+AddUsersController -> AddUsersController: user.email(req.get("email")
+AddUsersController -> UserDao : save(user)
+UserDao -> USER_DB: INSERT INTO USER .
+Browser <- HttpServer: HTTP/1.1 200 OK
+Browser -> HttpServer: POST: /api/setAnswers
+HttpServer -> Controllers: get("/api/addAnswers")
+HttpServer <- AddAlternativeController
+HttpServer -> AddAlternativeController: handle(request)
+AddAnswersController -> AddAnswersController: answer = new Answer();
+AddAnswersController -> AddAnswersController: answer.questionId(req.get("questionId")
+AddAnswersController -> AddAnswersController: answer.userId(req.get("userId")
+AddAnswersController -> AddAnswersController: answer.surveyId(req.get("surveyId")
+AnswerDao -> AddAnswersController: AnswerDao : save(answer)
+AnswerDao -> ANSWER_DB: INSERT INTO ANSWER .
+
+Browser -> HttpServer: GET: /api/getAnswers
+HttpServer -> Controllers: get("api/addAlternatives")
+HttpServer -> GetAnswersController: response = handle(request)
+GetAnswersController -> AnswerDao: retrieve.(surveyId)
+AnswerDao <- ANSWER_DB: SELECT FROM ANSWERS WHERE SURVEY ID = ? .
+Browser <- GetAnswersController : listSurvey
+
+
+
+
+
+
+
+@enduml

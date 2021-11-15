@@ -105,12 +105,6 @@ public class HttpServer {
                 writeOk200Response(clientSocket, responseText, contentType);
             }
 
-            if (requestTarget.endsWith(".ico")) {
-                contentType = "text/plain";
-
-                writeOk200Response(clientSocket, responseText, contentType);
-            }
-
             if (requestTarget.endsWith("/")) {
                 contentType = "text/html; charset=utf-8";
                 String location = "/index.html";

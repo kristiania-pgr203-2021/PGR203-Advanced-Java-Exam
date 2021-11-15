@@ -8,6 +8,13 @@
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/net.sourceforge.plantuml/plantuml -->
+        <dependency>
+            <groupId>net.sourceforge.plantuml</groupId>
+            <artifactId>plantuml</artifactId>
+            <version>6703</version>
+        </dependency>
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -125,17 +132,12 @@
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
                         <executions>
-                            <!-- Prepares the property pointing to the JaCoCo
-                            runtime agent which is passed as VM argument when Maven the Surefire plugin
-                            is executed. -->
                             <execution>
                                 <id>pre-unit-test</id>
                                 <goals>
                                     <goal>prepare-agent</goal>
                                 </goals>
                             </execution>
-                            <!-- Ensures that the code coverage report for
-                            unit tests is created after unit tests have been run. -->
                             <execution>
                                 <id>post-unit-test</id>
                                 <phase>test</phase>
