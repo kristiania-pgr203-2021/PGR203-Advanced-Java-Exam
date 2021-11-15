@@ -16,8 +16,6 @@ public class ListAllAnswers implements HttpController {
     @Override
     public HttpMessage handle(HttpMessage request) throws SQLException, IOException {
         AnswerDao answerDao = new AnswerDao(SurveyManager.createDataSource());
-        System.out.println("Dette er survey id: "+ SelectAnsweredSurveys.getSurveyId());
-        System.out.println("Dette er en question id"+SelectAnsweredQuestion.getQuestionId());
         String responseTxt = "";
 
             for (FullAnswer fullAnswer : answerDao.retrieveFullAnswer(SelectAnsweredSurveys.getSurveyId(), SelectAnsweredQuestion.getQuestionId())) {
@@ -25,8 +23,6 @@ public class ListAllAnswers implements HttpController {
                         "<h4>" + fullAnswer.getFirstName() + " " + fullAnswer.getLastName() + " " +
                                 " | " + fullAnswer.getAlternative() + "</h4>";
             }
-
-
-        return new HttpMessage("200, OK", responseTxt);
+        return new HttpMessage("200 OK", responseTxt);
     }
 }

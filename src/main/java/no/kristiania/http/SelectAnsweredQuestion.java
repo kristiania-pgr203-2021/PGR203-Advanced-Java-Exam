@@ -25,14 +25,11 @@ public class SelectAnsweredQuestion implements HttpController {
         Map<String, String> queryMap = HttpMessage.parseRequestParameters(request.messageBody);
         String questionId = queryMap.get("questionName");
 
-        System.out.println("Valgte question sin ID: " + questionId);
-        System.out.println("Valgte question sin tittel (retrieve): " + questionDao.retrieve(Long.parseLong(questionId)));
         String[] name = String.valueOf(questionDao.retrieve(Long.parseLong(questionId))).split("'");
-        System.out.println("qyestion etter split: " + name[1]);
 
         mapSurvey.put(Integer.valueOf(questionId), name[1]);
         this.questionId = Integer.valueOf(questionId);
 
-        return new HttpMessage("303, See Other", "/listAnsweredQuestions.html", questionId);
+        return new HttpMessage("303 See Other", "/listAnsweredQuestions.html", questionId);
     }
 }
