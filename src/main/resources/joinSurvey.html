@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Join a survey | Kristiania </title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<main>
+
+    <div id="joinSurvey_div">
+        <h1>Choose a survey you want to join :)</h1>
+        <form method="POST" action="/api/joinSurvey" accept-charset="UTF-8">
+            <p><label>Surveys: <select id="listSurveysForm" name="surveyName"></select></label><button>Start</button></p>
+        </form>
+    </div>
+    <div>
+        <button><a href="index.html">Return to front page</a></button>
+    </div>
+</main>
+</body>
+
+<script>
+    fetch("/api/listSurveysForm")
+        .then(function(response) {
+            return response.text();
+        }).then(function(text) {
+        document.getElementById("listSurveysForm").innerHTML = text;
+    });
+</script>
+</html>

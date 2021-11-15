@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset=UTF-8">
+    <title>Create your own survey | Kristiania </title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<main>
+    <div id="survey_div">
+        <h2 id="getSurvey"></h2>
+        <form action="/api/addSurvey" method="post" accept-charset="utf-8">
+            <label><h3>Survey title:</h3><input type="text" name="surveyInput"/></label>
+            <button>Add survey</button>
+        </form>
+    </div>
+    <br>
+
+    <div id="question_div">
+        <form action="/api/addQuestion" method="post" accept-charset="utf-8">
+            <h3>Question:</h3>
+            <label>Question text: <input type="text" name="questionInput"/></label>
+            <button>Add your question</button>
+        </form>
+    </div>
+
+    <div id="listQuestions_div">
+        <h3>Questions:</h3>
+        <div id="listQuestions"></div>
+    </div><br>
+    <div id="alternative_div">
+        <form action="/api/addAlternative" method="post" accept-charset="utf-8">
+            <h3>Create Alternative:</h3>
+            <label>Set question ID: <input type="text" name="questionId"/></label>
+            <label>Set alternative text: <input type="text" name="alternativeInput"/></label>
+            <button>Add your alternative</button>
+        </form>
+    </div>
+
+    <div id="allAlternatives_div">
+        <form action="/api/getQuestionId" method="post" accept-charset="UTF-8">
+            <h3>Alternative list</h3>
+            <label>Set question ID to se all belonging alternatives: <input type="text" name="questionInput"></label>
+            <button>Select</button>
+        </form>
+        <h4>All Alternatives:</h4>
+        <div id="listAlternatives"></div>
+    </div>
+
+
+    <div>
+        <button><a href="index.html">Return to frontpage</a></button>
+    </div>
+</main>
+</body>
+
+<script>
+
+    fetch("/api/getSurvey").then(function (res) {
+        return res.text();
+    }).then(function (text) {
+        document.getElementById("getSurvey").innerHTML = text;
+    });
+
+    fetch("/api/listQuestions").then(function (res) {
+        return res.text();
+    }).then(function (text) {
+        document.getElementById("listQuestions").innerHTML = text;
+    });
+
+    fetch("/api/listAlternatives").then(function (res) {
+        return res.text();
+    }).then(function (text) {
+        document.getElementById("listAlternatives").innerHTML = text;
+    });
+
+
+</script>
+</html>

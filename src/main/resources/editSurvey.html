@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit | Survey </title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<main>
+    <!-- Denne lister ut alle survey navnene øverst -->
+    <div id="listSurveys_div">
+        <h1>Edit existing survey</h1>
+        <h4>All Surveys:</h4>
+        <div id="listSurveys"></div>
+    </div>
+
+    <!-- Endrer på survey navn survey  -->
+    <div id="editSurvey_div">
+        <h3>Edit survey</h3>
+        <form action="/api/editSurvey" method="post" accept-charset="utf-8">
+            <label>Enter survey ID: <input type="text" name="surveyIdInput"/></label>
+            <label>Set <b>new</b> survey name: <input type="text" name="surveyNameInput"/></label>
+            <button>Update</button>
+        </form>
+    </div>
+
+    <!-- Sletter survey etter ID -->
+    <div id="deleteSurvey_div">
+        <h3>Delete survey</h3>
+        <form action="/api/deleteSurvey" method="POST" accept-charset="utf-8">
+            <p style="color:red;">Warning: deleting a survey will also delete all questions and alternatives who belong to the survey</p>
+            <label>Set survey ID: <input type="text" name="surveyInput"/></label>
+            <button>Delete</button>
+        </form>
+    </div><br>
+
+    <!-- Lister ut alle spørsmål etter survey ID -->
+    <div id="listQuestionsInEdit_div">
+        <form action="/api/getSurveyId" method="post" accept-charset="UTF-8">
+            <h3>Question list</h3>
+            <label>Set survey ID to se all belonging questions: <input type="text" name="surveyInput"></label>
+            <button>Select</button>
+        </form>
+        <h4>All Questions:</h4>
+        <div id="listQuestionsInEdit"></div>
+    </div>
+
+    <!-- Redigere et spørsmål etter question ID -->
+    <div id="editQuestion_div">
+        <h3>Edit question</h3>
+        <form action="/api/editQuestion" method="post" accept-charset="utf-8">
+            <label>Write question ID: <input type="text" name="questionIdInput"/></label>
+            <label>Set new question text: <input type="text" name="questionNameInput"/></label>
+            <button>Update</button>
+        </form>
+    </div>
+
+    <!-- Sletter valgte spørsmål og tilhørende alternativer -->
+    <div id="deleteQuestion_div">
+        <h3>Delete question</h3>
+        <form action="/api/deleteQuestion" method="POST" accept-charset="utf-8">
+            <p style="color:red;">Warning: deleting a question will also delete all alternatives who belong to the survey</p>
+            <label>Write question ID: <input type="text" name="questionInput"/></label>
+            <button>Delete</button>
+        </form>
+    </div><br>
+
+    <!-- Lister ut alle alternativene tilhørende ett spørsmål -->
+    <div id="listAlternativesInEdit_div">
+        <form action="/api/getQuestionIdInEdit" method="post" accept-charset="UTF-8">
+            <h3>Alternative list</h3>
+            <label>Set question ID to se all belonging alternatives: <input type="text" name="questionInput"></label>
+            <button>Select</button>
+        </form>
+        <h4>All Alternatives:</h4>
+        <div id="listAlternativesInEdit"></div>
+    </div>
+
+    <!-- Redigere et alternativ ut ifra alternativ ID -->
+    <div id="editAlternative_div">
+        <h3>Edit alternative</h3>
+        <form action="/api/editAlternative" method="post" accept-charset="utf-8">
+            <label>Enter alternative ID: <input type="text" name="alternativeIdInput"/></label>
+            <label>Set <b>new</b> alternative text: <input type="text" name="alternativeNameInput"/></label>
+            <button>Update</button>
+        </form>
+    </div>
+
+    <!-- Sletter alternativ ut ifra alternativ ID -->
+    <div id="deleteAlternative_div">
+        <h3>Delete alternative</h3>
+        <form action="/api/deleteAlternative" method="POST" accept-charset="utf-8">
+            <label>Set alternative ID: <input type="text" name="alternativeInput"/></label>
+            <button>Delete</button>
+        </form>
+    </div>
+
+    <div>
+        <button><a href="index.html">Return to frontpage</a></button>
+    </div>
+
+</main>
+</body>
+
+<script>
+
+    /************* Det serveren skriver/ sender ut til bruker *************/
+
+    fetch("/api/listSurveys").then(function (res) {
+        return res.text();
+    }).then(function(text) {
+        document.getElementById("listSurveys").innerHTML = text;
+    });
+    fetch("/api/listQuestionsInEdit").then(function (res) {
+        return res.text();
+    }).then(function(text) {
+        document.getElementById("listQuestionsInEdit").innerHTML = text;
+    });
+    fetch("/api/listAlternativesInEdit").then(function (res) {
+        return res.text();
+    }).then(function(text) {
+        document.getElementById("listAlternativesInEdit").innerHTML = text;
+    });
+
+</script>
+</html>

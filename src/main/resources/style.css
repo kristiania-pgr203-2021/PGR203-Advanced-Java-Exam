@@ -1,0 +1,29 @@
+body {
+    background-color: white;
+}
+
+main {
+    background-color: #F6DDCC;
+    padding: 5em 1em;
+    border-radius: 0.5em;
+    max-width: 54em;
+    margin: auto;
+}
+
+#survey_div, #question_div, #editQuestion_div, #listQuestions_div, #alternative_div,
+#editSurvey_div, #listSurveys_div, #allQuestions_div, #deleteSurvey_div,
+#allAlternatives_div, #deleteAlternative_div, #deleteQuestion_div, #listQuestionsInEdit_div,
+#deleteQuestion_div, #listAlternativesInEdit_div, #editAlternative_div, #userForm_div, #joinSurvey_div, .white_div {
+    background-color: white;
+    padding: 1em 1em;
+    border-radius: 0.5em;
+    max-width: 54em;
+    margin: 0.5em;
+    box-shadow: 1px 5px 1px lightgray;
+}
+
+a:hover, a:visited, a:link, a:active
+{
+    text-decoration: none;
+    color: black;
+}

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Answers | Kristiania </title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<main>
+    <div class="white_div">
+        <div id="selectedSurvey"></div>
+        <div id="getUser"></div>
+        <div id="listUserAndSurvey"></div>
+    </div>
+
+    <div id="listQuestions"></div><br>
+
+    <button><a href="index.html">Return to front page</a></button>
+</main>
+</body>
+
+<script>
+
+    /************* Det serveren skriver/ sender ut til bruker *************/
+
+    fetch("/api/selectedSurvey")
+        .then(function(response) {
+            return response.text();
+        }).then(function(text) {
+        document.getElementById("selectedSurvey").innerHTML = text;
+    });
+
+    fetch("/api/getUser")
+        .then(function(response) {
+            return response.text();
+        }).then(function(text) {
+        document.getElementById("getUser").innerHTML = text;
+    });
+    fetch("/api/listQuestionsInAnswerSurvey")
+        .then(function(response) {
+            return response.text();
+        }).then(function(text) {
+        document.getElementById("listQuestions").innerHTML = text;
+    });
+
+</script>
+</html>
