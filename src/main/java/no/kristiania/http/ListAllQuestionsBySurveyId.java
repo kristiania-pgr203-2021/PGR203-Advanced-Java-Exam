@@ -17,14 +17,11 @@ public class ListAllQuestionsBySurveyId implements HttpController {
     public HttpMessage handle(HttpMessage request) throws SQLException, IOException {
         String messageBody = "";
 
-        for (Question question : questionDao.listQuestionsBySurveyId(1)) {
+        for (Question question : questionDao.listQuestionsBySurveyId(SelectAnsweredSurveys.getSurveyId())) {
             int value = Math.toIntExact(question.getId());
-            System.out.println("QuestionID: " + value);
             messageBody += "<option value=" + (value) + ">" + "ID: " + question.getId() + " " + question.getQuestionText() + "</option>";
         }
 
-        System.out.println("This is messagebody (HTML): " + messageBody);
-
-        return new HttpMessage("200, OK", messageBody);
+        return new HttpMessage("200 OK", messageBody);
     }
 }

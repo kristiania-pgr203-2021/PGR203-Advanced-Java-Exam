@@ -12,7 +12,7 @@ public class TestData {
 
     public static DataSource testDataSource() {
         JdbcDataSource dataSource = new JdbcDataSource();
-        dataSource.setUrl("jdbc:h2:mem:persondb;DB_CLOSE_DELAY=-1");
+        dataSource.setUrl("jdbc:h2:mem:survey_db;DB_CLOSE_DELAY=-1");
         Flyway.configure().dataSource(dataSource).load().migrate();
         return dataSource;
     }

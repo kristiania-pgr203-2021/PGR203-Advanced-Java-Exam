@@ -6,15 +6,11 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Map;
 
-import static no.kristiania.http.HttpServer.mapSurvey;
+import static no.kristiania.http.HttpServer.mapInAnswered;
 
 public class SelectAnsweredSurveys implements HttpController {
     private final SurveyDao surveyDao;
     private static int surveyId = 1;
-
-    public static Integer getSurveyId() {
-        return surveyId;
-    }
 
     public SelectAnsweredSurveys(SurveyDao surveyDao) {
         this.surveyDao = surveyDao;
@@ -25,19 +21,14 @@ public class SelectAnsweredSurveys implements HttpController {
         Map<String, String> queryMap = HttpMessage.parseRequestParameters(request.messageBody);
         String surveyId = queryMap.get("surveyName");
 
-        System.out.println("Valgte survey sin ID: " + surveyId);
-        System.out.println("Valgte survey sin tittel (retrieve): " + surveyDao.retrieve(Long.parseLong(surveyId)));
         String[] name = String.valueOf(surveyDao.retrieve(Long.parseLong(surveyId))).split("'");
-        System.out.println("Survey etter split: " + name[1]);
-
-
-        System.out.println("Dette er før");
-        mapSurvey.put(Integer.valueOf(surveyId), name[1]);
-        System.out.println("Dette er etter");
-        this.surveyId = Integer.valueOf(surveyId);
-
+        mapInAnswered.put(Integer.valueOf(surveyId), name[1]);
+        SelectAnsweredSurveys.surveyId = Integer.valueOf(surveyId);
 
         return new HttpMessage("303 See Other","/listAnsweredQuestions.html", "surveyId");
+    }
 
+    public static Integer getSurveyId() {
+        return surveyId;
     }
 }
